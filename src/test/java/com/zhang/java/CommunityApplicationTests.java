@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.zhang.java.domain.DiscussPost;
 import com.zhang.java.mapper.UserMapper;
 import com.zhang.java.service.DiscussPostService;
+import com.zhang.java.util.MailClient;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.test.context.ContextConfiguration;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import java.util.List;
 
@@ -57,5 +60,24 @@ class CommunityApplicationTests implements ApplicationContextAware {
         logger.info("info log");
         logger.warn("warn log");
         logger.error("error log");
+    }
+
+    @Test
+    public void testSendEmail() {
+        MailClient mailClient = (MailClient) applicationContext.getBean("mailClient");
+        mailClient.sendMail("275076723@qq.com", "测试", "哈哈");
+    }
+
+    @Test
+    public void testSendHtmlEmail() {
+        TemplateEngine templateEngine = (TemplateEngine) applicationContext.getBean("templateEngine");
+        MailClient mailClient = (MailClient) applicationContext.getBean("mailClient");
+
+        Context context = new Context();
+        context.setVariable("username", "Kat");
+        String content = templateEngine.process("/mail/html_demo", context);
+        System.out.println(content);
+
+        mailClient.sendMail("275076723@qq.com", "html测试", content);
     }
 }
