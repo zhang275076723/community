@@ -26,6 +26,7 @@ public class User {
     //用户状态，0-未激活; 1-已激活
     private int status;
     private String activationCode;
+    //用户头像url，0-1000t.png
     private String headerUrl;
     private Date createTime;
 }

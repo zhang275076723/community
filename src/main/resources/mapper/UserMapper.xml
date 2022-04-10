@@ -26,7 +26,7 @@
     <insert id="insertUser" useGeneratedKeys="true" keyProperty="id">
         insert into user
         values (null, #{username}, #{password}, #{salt}, #{email},
-                #{type}, #{status}, #{activationCode}, #{headUrl}, #{createTime})
+                #{type}, #{status}, #{activationCode}, #{headerUrl}, #{createTime})
     </insert>
 
     <update id="updateUserStatus">

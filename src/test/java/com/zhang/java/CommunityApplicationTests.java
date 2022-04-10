@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.zhang.java.domain.DiscussPost;
 import com.zhang.java.mapper.UserMapper;
 import com.zhang.java.service.DiscussPostService;
+import com.zhang.java.util.CommunityUtil;
 import com.zhang.java.util.MailClient;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -74,6 +75,7 @@ class CommunityApplicationTests implements ApplicationContextAware {
         MailClient mailClient = (MailClient) applicationContext.getBean("mailClient");
 
         Context context = new Context();
+        //设置html中username的值
         context.setVariable("username", "Kat");
         String content = templateEngine.process("/mail/html_demo", context);
         System.out.println(content);
