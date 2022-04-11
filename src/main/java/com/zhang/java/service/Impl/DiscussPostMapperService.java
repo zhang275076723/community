@@ -19,12 +19,12 @@ public class DiscussPostMapperService implements DiscussPostService {
     private DiscussPostMapper discussPostMapper;
 
     @Override
-    public List<DiscussPost> findDiscussPosts(int userId) {
+    public List<DiscussPost> findDiscussPosts(Integer userId) {
         return discussPostMapper.selectDiscussPosts(userId);
     }
 
     @Override
-    public int findDiscussPostRows(int userId) {
+    public Integer findDiscussPostRows(Integer userId) {
         return discussPostMapper.selectDiscussPostRows(userId);
     }
 

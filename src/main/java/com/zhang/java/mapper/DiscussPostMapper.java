@@ -14,8 +14,8 @@ import java.util.List;
 @Mapper
 public interface DiscussPostMapper {
 
-    List<DiscussPost> selectDiscussPosts(@Param("userId") int userId);
+    List<DiscussPost> selectDiscussPosts(@Param("userId") Integer userId);
 
-    int selectDiscussPostRows(@Param("userId") int userId);
+    Integer selectDiscussPostRows(@Param("userId") Integer userId);
 
 }

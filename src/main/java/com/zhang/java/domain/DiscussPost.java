@@ -15,15 +15,15 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DiscussPost {
-    private int id;
-    private int userId;
+    private Integer id;
+    private Integer userId;
     private String title;
     private String content;
     //帖子类型，0-普通，1-置顶
-    private int type;
+    private Integer type;
     //帖子状态，0-正常，1-精华，2-拉黑
-    private int status;
+    private Integer status;
     private Date createTime;
-    private int commentCount;
-    private double score;
+    private Integer commentCount;
+    private Double score;
 }

@@ -1,11 +1,13 @@
 package com.zhang.java.service.Impl;
 
+import com.zhang.java.domain.LoginTicket;
 import com.zhang.java.domain.User;
+import com.zhang.java.mapper.LoginTicketMapper;
 import com.zhang.java.mapper.UserMapper;
 import com.zhang.java.service.UserService;
 import com.zhang.java.util.CommunityUtil;
 import com.zhang.java.util.MailClient;
-import com.zhang.java.util.UserActivationStatus;
+import com.zhang.java.util.CommunityConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +31,9 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
 
     @Autowired
+    private LoginTicketMapper loginTicketMapper;
+
+    @Autowired
     private MailClient mailClient;
 
     @Autowired
@@ -39,12 +44,64 @@ public class UserServiceImpl implements UserService {
     private String domain;
 
     @Value("${server.servlet.context-path}")
-    //项目名
+    //项目路径名
     private String contextPath;
 
     @Override
-    public User findUserById(int id) {
+    public User findUserById(Integer id) {
         return userMapper.selectUserById(id);
+    }
+
+    @Override
+    public Map<String, Object> login(String username, String password, Integer expiredSeconds) {
+        Map<String, Object> map = new HashMap<>();
+
+        // 空值处理
+        if (StringUtils.isBlank(username)) {
+            map.put("usernameMsg", "账号不能为空!");
+            return map;
+        }
+        if (StringUtils.isBlank(password)) {
+            map.put("passwordMsg", "密码不能为空!");
+            return map;
+        }
+
+        // 验证账号
+        User user = userMapper.selectUserByName(username);
+        if (user == null) {
+            map.put("usernameMsg", "该账号不存在!");
+            return map;
+        }
+
+        // 验证激活状态
+        if (user.getStatus() == 0) {
+            map.put("usernameMsg", "该账号未激活!");
+            return map;
+        }
+
+        // 验证密码
+        password = CommunityUtil.encodeMD5(password + user.getSalt());
+        if (!user.getPassword().equals(password)) {
+            map.put("passwordMsg", "密码不正确!");
+            return map;
+        }
+
+        // 生成登录凭证
+        LoginTicket loginTicket = new LoginTicket();
+        loginTicket.setUserId(user.getId());
+        loginTicket.setTicket(CommunityUtil.generateUUID());
+        loginTicket.setStatus(0);
+        // 将expiredSeconds转化为long，避免乘上1000时溢出
+        loginTicket.setExpired(new Date(System.currentTimeMillis() + (long) expiredSeconds * 1000));
+        loginTicketMapper.insertLoginTicket(loginTicket);
+
+        map.put("ticket", loginTicket.getTicket());
+        return map;
+    }
+
+    @Override
+    public void logout(String ticket) {
+        loginTicketMapper.updateLoginTicketStatus(ticket, 1);
     }
 
     @Override
@@ -107,15 +164,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public int activation(int userId, String activationCode) {
+    public Integer activation(Integer userId, String activationCode) {
         User user = userMapper.selectUserById(userId);
         if (user.getStatus() == 1) {
-            return UserActivationStatus.ACTIVATION_REPEAT;
+            return CommunityConstant.ACTIVATION_REPEAT;
         } else if (user.getActivationCode().equals(activationCode)) {
             userMapper.updateUserStatus(userId, 1);
-            return UserActivationStatus.ACTIVATION_SUCCESS;
+            return CommunityConstant.ACTIVATION_SUCCESS;
         } else {
-            return UserActivationStatus.ACTIVATION_FAILURE;
+            return CommunityConstant.ACTIVATION_FAILURE;
         }
     }
 

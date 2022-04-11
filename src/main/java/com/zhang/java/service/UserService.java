@@ -10,9 +10,13 @@ import java.util.Map;
  * @Description
  */
 public interface UserService {
-    User findUserById(int id);
+    User findUserById(Integer id);
 
-    Map<String,Object> register(User user);
+    Map<String, Object> login(String username, String password, Integer expiredSeconds);
 
-    int activation(int userId, String activationCode);
+    void logout(String ticket);
+
+    Map<String, Object> register(User user);
+
+    Integer activation(Integer userId, String activationCode);
 }

@@ -3,7 +3,6 @@ package com.zhang.java.mapper;
 import com.zhang.java.domain.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
 
 /**
  * @Date 2022/4/3 18:46
@@ -12,17 +11,17 @@ import org.springframework.stereotype.Repository;
  */
 @Mapper
 public interface UserMapper {
-    User selectUserById(@Param("id") int id);
+    User selectUserById(@Param("id") Integer id);
 
     User selectUserByName(@Param("username") String username);
 
     User selectUserByEmail(@Param("email") String email);
 
-    int insertUser(User user);
+    Integer insertUser(User user);
 
-    int updateUserStatus(@Param("id") int id, @Param("status") int status);
+    Integer updateUserStatus(@Param("id") Integer id, @Param("status") Integer status);
 
-    int updateUserHeader(@Param("id") int id, @Param("headerUrl") String headerUrl);
+    Integer updateUserHeader(@Param("id") Integer id, @Param("headerUrl") String headerUrl);
 
-    int updateUserPassword(@Param("id") int id, @Param("password") String password);
+    Integer updateUserPassword(@Param("id") Integer id, @Param("password") String password);
 }

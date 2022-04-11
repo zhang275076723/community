@@ -3,6 +3,8 @@ package com.zhang.java;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zhang.java.domain.DiscussPost;
+import com.zhang.java.domain.LoginTicket;
+import com.zhang.java.mapper.LoginTicketMapper;
 import com.zhang.java.mapper.UserMapper;
 import com.zhang.java.service.DiscussPostService;
 import com.zhang.java.util.CommunityUtil;
@@ -19,6 +21,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.util.Date;
 import java.util.List;
 
 @SpringBootTest
@@ -81,5 +84,13 @@ class CommunityApplicationTests implements ApplicationContextAware {
         System.out.println(content);
 
         mailClient.sendMail("275076723@qq.com", "html测试", content);
+    }
+
+    @Test
+    public void testLoginTicket() {
+        LoginTicketMapper loginTicketMapper = (LoginTicketMapper) applicationContext.getBean("loginTicketMapper");
+//        loginTicketMapper.insertLoginTicket(new LoginTicket(null, 1001, "abcde", 0, new Date(System.currentTimeMillis() + 1000 * 60 * 10)));
+        loginTicketMapper.updateLoginTicketStatus("abcde",1);
+        System.out.println(loginTicketMapper.selectLoginTicketByTicket("abcde"));
     }
 }

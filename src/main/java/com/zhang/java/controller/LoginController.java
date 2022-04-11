@@ -3,16 +3,19 @@ package com.zhang.java.controller;
 import com.google.code.kaptcha.Producer;
 import com.zhang.java.domain.User;
 import com.zhang.java.service.UserService;
-import com.zhang.java.util.CommunityUtil;
-import com.zhang.java.util.UserActivationStatus;
+import com.zhang.java.util.CommunityConstant;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
@@ -35,6 +38,10 @@ public class LoginController {
     @Autowired
     private Producer kaptchaProducer;
 
+    @Value("${server.servlet.context-path}")
+    //项目路径名
+    private String contextPath;
+
     @GetMapping("/login")
     public String getLoginPage() {
         return "/site/login";
@@ -43,6 +50,62 @@ public class LoginController {
     @GetMapping("/register")
     public String getRegisterPage() {
         return "/site/register";
+    }
+
+    @PostMapping("/login")
+    public String login(Model model,
+                        HttpSession session,
+                        HttpServletResponse response,
+                        User user,
+                        @RequestParam("verifyCode") String verifyCode,
+                        boolean rememberMe) {
+        //因为获取的是checkbox中的checked属性值，而不是checkbox中的value值，所以不能使用@RequestParam
+
+        // 检查验证码
+        String kaptcha = (String) session.getAttribute("kaptcha");
+        if (StringUtils.isBlank(kaptcha) ||
+                StringUtils.isBlank(verifyCode) ||
+                !kaptcha.equalsIgnoreCase(verifyCode)) {
+            model.addAttribute("verifyCodeMsg", "验证码不正确!");
+            // 因为rememberMe是请求参数，在页面回显时，可以不将其放入model中，
+            // 而直接在thymeleaf页面中使用${param.rememberMe}，同样也能获取该值
+            // param表示本次请求
+            model.addAttribute("rememberMe", rememberMe);
+            //不能重定向到get请求的login，因为model携带的数据只在本次request中有效
+            return "/site/login";
+        }
+
+        // 检查用户名，密码
+        // 根据是否记住我设置用户登录凭证的超时时间
+        int expiredSeconds = rememberMe ?
+                CommunityConstant.REMEMBER_EXPIRED_SECONDS :
+                CommunityConstant.DEFAULT_EXPIRED_SECONDS;
+        Map<String, Object> map = userService.login(user.getUsername(), user.getPassword(), expiredSeconds);
+        if (map.containsKey("ticket")) {
+            Cookie cookie = new Cookie("ticket", map.get("ticket").toString());
+            cookie.setPath(contextPath);
+            cookie.setMaxAge(expiredSeconds);
+            response.addCookie(cookie);
+            //重定向到get请求的index
+            return "redirect:/index";
+        } else {
+            model.addAttribute("usernameMsg", map.get("usernameMsg"));
+            model.addAttribute("passwordMsg", map.get("passwordMsg"));
+            // 因为rememberMe是请求参数，在页面回显时，可以不将其放入model中，
+            // 而直接在thymeleaf页面中使用${param.rememberMe}，同样也能获取该值
+            // param表示本次请求
+            model.addAttribute("rememberMe", rememberMe);
+            //不能重定向到get请求的login，因为model携带的数据只在本次request中有效
+            return "/site/login";
+        }
+    }
+
+    @GetMapping("/logout")
+    public String logout(@CookieValue("ticket") String ticket) {
+        userService.logout(ticket);
+
+        //重定向到get请求的index
+        return "redirect:/index";
     }
 
     @PostMapping("/register")
@@ -60,6 +123,8 @@ public class LoginController {
         model.addAttribute("usernameMsg", map.get("usernameMsg"));
         model.addAttribute("passwordMsg", map.get("passwordMsg"));
         model.addAttribute("emailMsg", map.get("emailMsg"));
+
+        //不能使用重定向，因为model携带的数据只在本次request中有效
         return "/site/register";
     }
 
@@ -71,10 +136,10 @@ public class LoginController {
 
         int result = userService.activation(userId, activationCode);
 
-        if (result == UserActivationStatus.ACTIVATION_SUCCESS) {
+        if (result == CommunityConstant.ACTIVATION_SUCCESS) {
             model.addAttribute("msg", "激活成功，您的账号已经可以正常使用了!");
             model.addAttribute("target", "/login");
-        } else if (result == UserActivationStatus.ACTIVATION_REPEAT) {
+        } else if (result == CommunityConstant.ACTIVATION_REPEAT) {
             model.addAttribute("msg", "重复操作，该账号已经激活过了!");
             model.addAttribute("target", "/index");
         } else {
