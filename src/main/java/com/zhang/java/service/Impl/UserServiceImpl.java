@@ -176,4 +176,9 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public LoginTicket findLoginTicketByTicket(String ticket) {
+        return loginTicketMapper.selectLoginTicketByTicket(ticket);
+    }
+
 }
