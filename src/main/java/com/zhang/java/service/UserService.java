@@ -22,4 +22,6 @@ public interface UserService {
     Integer activation(Integer userId, String activationCode);
 
     LoginTicket findLoginTicketByTicket(String ticket);
+
+    Integer updateHeader(Integer id,String headerUrl);
 }

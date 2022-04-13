@@ -181,4 +181,8 @@ public class UserServiceImpl implements UserService {
         return loginTicketMapper.selectLoginTicketByTicket(ticket);
     }
 
+    @Override
+    public Integer updateHeader(Integer id, String headerUrl) {
+        return userMapper.updateUserHeader(id, headerUrl);
+    }
 }
