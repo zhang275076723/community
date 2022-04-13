@@ -185,4 +185,11 @@ public class UserServiceImpl implements UserService {
     public Integer updateHeader(Integer id, String headerUrl) {
         return userMapper.updateUserHeader(id, headerUrl);
     }
+
+    @Override
+    public Integer updatePassword(Integer id, String password) {
+        User user = userMapper.selectUserById(id);
+        password = CommunityUtil.encodeMD5(password + user.getSalt());
+        return userMapper.updateUserPassword(id, password);
+    }
 }

@@ -23,5 +23,7 @@ public interface UserService {
 
     LoginTicket findLoginTicketByTicket(String ticket);
 
-    Integer updateHeader(Integer id,String headerUrl);
+    Integer updateHeader(Integer id, String headerUrl);
+
+    Integer updatePassword(Integer id, String password);
 }

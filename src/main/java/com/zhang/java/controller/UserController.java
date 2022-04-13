@@ -117,7 +117,25 @@ public class UserController {
     }
 
     @GetMapping("/updatePassword")
-    public String updatePassword() {
+    public String updatePassword(@RequestParam("oldPassword") String oldPassword,
+                                 @RequestParam("newPassword") String newPassword,
+                                 @RequestParam("confirmPassword") String confirmPassword,
+                                 Model model) {
+
+        User user = hostHolder.getUser();
+
+        if (!newPassword.equals(confirmPassword)) {
+            model.addAttribute("confirmPasswordMsg", "新密码和确认密码不一致！");
+            return "/site/setting";
+        }
+
+        oldPassword = CommunityUtil.encodeMD5(oldPassword + user.getSalt());
+        if (!user.getPassword().equals(oldPassword)) {
+            model.addAttribute("oldPasswordMsg", "原密码错误！");
+            return "/site/setting";
+        }
+        userService.updatePassword(user.getId(), newPassword);
+
         return "redirect:/index";
     }
 }
