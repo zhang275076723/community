@@ -106,8 +106,8 @@ public class UserController {
         //设置响应为图片类型
         response.setContentType("image/" + suffix);
 
-        FileInputStream fis;
-        OutputStream os;
+        FileInputStream fis = null;
+        OutputStream os = null;
         try {
             fis = new FileInputStream(filename);
             os = response.getOutputStream();
@@ -118,6 +118,21 @@ public class UserController {
             }
         } catch (IOException e) {
             logger.error("读取头像失败: " + e.getMessage());
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (os != null) {
+                try {
+                    os.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 

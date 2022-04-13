@@ -90,7 +90,12 @@ class CommunityApplicationTests implements ApplicationContextAware {
     public void testLoginTicket() {
         LoginTicketMapper loginTicketMapper = (LoginTicketMapper) applicationContext.getBean("loginTicketMapper");
 //        loginTicketMapper.insertLoginTicket(new LoginTicket(null, 1001, "abcde", 0, new Date(System.currentTimeMillis() + 1000 * 60 * 10)));
-        loginTicketMapper.updateLoginTicketStatus("abcde",1);
+        loginTicketMapper.updateLoginTicketStatus("abcde", 1);
         System.out.println(loginTicketMapper.selectLoginTicketByTicket("abcde"));
+    }
+
+    @Test
+    public void testSensitiveWords() {
+
     }
 }
