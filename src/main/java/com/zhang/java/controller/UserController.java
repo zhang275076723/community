@@ -1,5 +1,6 @@
 package com.zhang.java.controller;
 
+import com.zhang.java.annotation.LoginRequired;
 import com.zhang.java.domain.User;
 import com.zhang.java.service.UserService;
 import com.zhang.java.util.CommunityUtil;
@@ -46,11 +47,15 @@ public class UserController {
     //上传路径
     private String uploadPath;
 
+    //使用自定义注解实现请求拦截
+    @LoginRequired
     @GetMapping("/setting")
     public String getSettingPage() {
         return "/site/setting";
     }
 
+    //使用自定义注解实现请求拦截
+    @LoginRequired
     @PostMapping("/uploadHeaderImage")
     public String uploadHeaderImage(@RequestParam("headerImage") MultipartFile file, Model model) {
         if (file == null) {
@@ -116,6 +121,8 @@ public class UserController {
         }
     }
 
+    //使用自定义注解实现请求拦截
+    @LoginRequired
     @GetMapping("/updatePassword")
     public String updatePassword(@RequestParam("oldPassword") String oldPassword,
                                  @RequestParam("newPassword") String newPassword,

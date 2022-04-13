@@ -17,7 +17,7 @@ import java.util.Date;
 /**
  * @Date 2022/4/12 20:43
  * @Author zsy
- * @Description 处理用户登录状态
+ * @Description 使用LoginTicket保存用户登录状态
  */
 @Component
 public class LoginTicketInterceptor implements HandlerInterceptor {

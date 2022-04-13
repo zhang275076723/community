@@ -1,6 +1,7 @@
 package com.zhang.java.controller;
 
 import com.google.code.kaptcha.Producer;
+import com.zhang.java.annotation.LoginRequired;
 import com.zhang.java.domain.User;
 import com.zhang.java.service.UserService;
 import com.zhang.java.util.CommunityConstant;
@@ -100,6 +101,8 @@ public class LoginController {
         }
     }
 
+    //使用自定义注解实现请求拦截
+    @LoginRequired
     @GetMapping("/logout")
     public String logout(@CookieValue("ticket") String ticket) {
         userService.logout(ticket);
