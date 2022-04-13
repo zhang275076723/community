@@ -1,5 +1,6 @@
 package com.zhang.java.util;
 
+import org.apache.commons.lang3.CharUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +27,7 @@ public class SensitiveFilter {
     private static final String REPLACEMENT_WORDS = "***";
 
     // 前缀树
-    private TrieNode root = new TrieNode();
+    private final TrieNode root = new TrieNode();
 
 
     /**
@@ -102,16 +103,59 @@ public class SensitiveFilter {
             return text;
         }
 
-        //
-        int left;
-        int right;
+        // text文本的左右指针
+        int left = 0;
+        int right = 0;
+        TrieNode node = root;
         StringBuilder sb = new StringBuilder();
 
         while (left < text.length()) {
+            char c = text.charAt(right);
+            // 当前字符是特殊字符
+            if (isSymbol(c)) {
+                if (node == root) {
+                    sb.append(c);
+                    left++;
+                }
+                right++;
+                continue;
+            }
 
+            node = node.getSubNode(c);
+            // 当前字符c不是敏感字符
+            if (node == null) {
+                sb.append(text.charAt(left));
+                left++;
+                right = left;
+                //node重新指向根节点
+                node = root;
+            } else if (node.getSensitiveWordEnd()) {
+                // c是敏感词，并且是敏感词末尾
+                sb.append(REPLACEMENT_WORDS);
+                left = right + 1;
+                right = left;
+                //node重新指向根节点
+                node = root;
+            } else {
+                //c是敏感词，并且不是敏感词末尾
+                right++;
+            }
         }
 
-        return sb;
+        // 处理最后一批字符
+        sb.append(text, left, right);
+
+        return sb.toString();
+    }
+
+    /**
+     * 判断当前字符是否是特殊字符
+     *
+     * @return
+     */
+    private boolean isSymbol(Character c) {
+        // 0x2E80-0x9FFF 是东亚文字范围
+        return !CharUtils.isAsciiAlphanumeric(c) && (c < 0x2E80 || c > 0x9FFF);
     }
 
     /**
@@ -119,18 +163,19 @@ public class SensitiveFilter {
      */
     private class TrieNode {
         // 当前节点的子节点集合，key是下级字符，value是下级节点
-        private Map<Character, TrieNode> subNodes = new HashMap<>();
+        private final Map<Character, TrieNode> subNodes = new HashMap<>();
 
         // 记录当前节点是否是叶节点，即从根节点到叶节点是一个完整的敏感词
         private Boolean sensitiveWordEnd = false;
 
-        //添加子节点
+        // 添加子节点
         public void addSubNode(Character c, TrieNode node) {
             subNodes.put(c, node);
         }
 
+        // 获取子节点
         public TrieNode getSubNode(Character c) {
-            subNodes.get(c);
+            return subNodes.get(c);
         }
 
         public Boolean getSensitiveWordEnd() {

@@ -9,6 +9,7 @@ import com.zhang.java.mapper.UserMapper;
 import com.zhang.java.service.DiscussPostService;
 import com.zhang.java.util.CommunityUtil;
 import com.zhang.java.util.MailClient;
+import com.zhang.java.util.SensitiveFilter;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,6 +97,8 @@ class CommunityApplicationTests implements ApplicationContextAware {
 
     @Test
     public void testSensitiveWords() {
-
+        SensitiveFilter sensitiveFilter = (SensitiveFilter) applicationContext.getBean("sensitiveFilter");
+        String text = "碰❤瓷嫖❤娼，卖艺❤卖❤淫❤";
+        System.out.println(sensitiveFilter.filterSensitiveWords(text));
     }
 }
