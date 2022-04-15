@@ -83,6 +83,7 @@ public class LoginController {
                 CommunityConstant.DEFAULT_EXPIRED_SECONDS;
         Map<String, Object> map = userService.login(user.getUsername(), user.getPassword(), expiredSeconds);
         if (map.containsKey("ticket")) {
+            //设置cookie，其中的loginTicket用于保存用户登录状态
             Cookie cookie = new Cookie("ticket", map.get("ticket").toString());
             cookie.setPath(contextPath);
             cookie.setMaxAge(expiredSeconds);

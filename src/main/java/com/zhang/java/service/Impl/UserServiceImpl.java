@@ -91,7 +91,7 @@ public class UserServiceImpl implements UserService {
         loginTicket.setUserId(user.getId());
         loginTicket.setTicket(CommunityUtil.generateUUID());
         loginTicket.setStatus(0);
-        // 将expiredSeconds转化为long，避免乘上1000时溢出
+        // 将expiredSeconds转化为long，避免乘上1000时溢出，expiredSeconds单位为s，所以转换为ms要乘上1000
         loginTicket.setExpired(new Date(System.currentTimeMillis() + (long) expiredSeconds * 1000));
         loginTicketMapper.insertLoginTicket(loginTicket);
 

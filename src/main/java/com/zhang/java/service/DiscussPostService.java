@@ -13,4 +13,6 @@ public interface DiscussPostService {
     List<DiscussPost> findDiscussPosts(Integer userId);
 
     Integer findDiscussPostRows(Integer userId);
+
+    Integer addDiscussPost(DiscussPost discussPost);
 }
