@@ -3,18 +3,15 @@ package com.zhang.java;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zhang.java.domain.DiscussPost;
-import com.zhang.java.domain.LoginTicket;
 import com.zhang.java.mapper.LoginTicketMapper;
 import com.zhang.java.mapper.UserMapper;
 import com.zhang.java.service.DiscussPostService;
-import com.zhang.java.util.CommunityUtil;
 import com.zhang.java.util.MailClient;
 import com.zhang.java.util.SensitiveFilter;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -22,7 +19,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import java.util.Date;
 import java.util.List;
 
 @SpringBootTest
@@ -51,7 +47,7 @@ class CommunityApplicationTests implements ApplicationContextAware {
     @Test
     public void testPageHelper() {
         PageHelper.startPage(1, 10);
-        DiscussPostService discussPostService = (DiscussPostService) applicationContext.getBean("discussPostMapperService");
+        DiscussPostService discussPostService = (DiscussPostService) applicationContext.getBean("discussPostServiceImpl");
         List<DiscussPost> discussPosts = discussPostService.findDiscussPosts(0);
         PageInfo<DiscussPost> pageInfo = new PageInfo<>(discussPosts, 5);
         System.out.println(pageInfo);

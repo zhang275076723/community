@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.HtmlUtils;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -38,6 +39,12 @@ public class DiscussPostServiceImpl implements DiscussPostService {
         if (discussPost == null) {
             throw new IllegalArgumentException("参数不能为空！");
         }
+
+        discussPost.setType(0);
+        discussPost.setStatus(0);
+        discussPost.setCreateTime(new Date());
+        discussPost.setCommentCount(0);
+        discussPost.setScore(0.0);
 
         //转义帖子中的html标记，防止被浏览器解析
         discussPost.setTitle(HtmlUtils.htmlEscape(discussPost.getTitle()));

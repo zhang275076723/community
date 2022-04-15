@@ -43,7 +43,7 @@ public class DiscussPostController {
         post.setUserId(user.getId());
         post.setTitle(discussPost.getTitle());
         post.setContent(discussPost.getContent());
-        post.setCreateTime(new Date());
+
         discussPostService.addDiscussPost(post);
 
         // 报错的情况,将来统一处理.
