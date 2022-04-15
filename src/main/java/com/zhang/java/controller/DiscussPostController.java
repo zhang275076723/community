@@ -4,10 +4,12 @@ import com.zhang.java.annotation.LoginRequired;
 import com.zhang.java.domain.DiscussPost;
 import com.zhang.java.domain.User;
 import com.zhang.java.service.DiscussPostService;
+import com.zhang.java.service.UserService;
 import com.zhang.java.util.CommunityUtil;
 import com.zhang.java.util.HostHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -20,6 +22,9 @@ import java.util.Date;
 @Controller
 @RequestMapping("/discusspost")
 public class DiscussPostController {
+    @Autowired
+    private UserService userService;
+
     @Autowired
     private DiscussPostService discussPostService;
 
@@ -49,4 +54,14 @@ public class DiscussPostController {
         // 报错的情况,将来统一处理.
         return CommunityUtil.getJSONString(0, "发布成功！", null);
     }
+
+    @GetMapping("/detail/{id}")
+    public String getDiscussPost(@PathVariable("id") Integer id, Model model) {
+        DiscussPost discussPost = discussPostService.findDiscussPostById(id);
+        User user = userService.findUserById(discussPost.getUserId());
+        model.addAttribute("discussPost",discussPost);
+        model.addAttribute("user",user);
+        return "/site/discuss-detail";
+    }
+
 }

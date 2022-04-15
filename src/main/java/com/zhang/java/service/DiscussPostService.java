@@ -15,4 +15,6 @@ public interface DiscussPostService {
     Integer findDiscussPostRows(Integer userId);
 
     Integer addDiscussPost(DiscussPost discussPost);
+
+    DiscussPost findDiscussPostById(Integer id);
 }

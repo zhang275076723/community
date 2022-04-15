@@ -26,4 +26,7 @@
                #{status}, #{createTime}, #{commentCount}, #{score})
     </insert>
 
+    <select id="selectDiscussPostById" resultType="DiscussPost">
+        select * from discuss_post where id = #{id}
+    </select>
 </mapper>
