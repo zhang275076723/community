@@ -61,6 +61,7 @@
 		<!-- 内容 -->
 		<div class="main">
 			<div class="container">
+				<!--帖子导航栏-->
 				<div class="position-relative">
 					<!-- 筛选条件 -->
 					<ul class="nav nav-tabs mb-3">
@@ -71,11 +72,12 @@
 							<a class="nav-link" href="#">最热</a>
 						</li>
 					</ul>
-					<!--根据用户是否登录，动态显示"我要发布"按钮-->
-					<button type="button" class="btn btn-primary btn-sm position-absolute rt-0" data-toggle="modal" data-target="#publishModal" th:if="${loginUser != null}">我要发布</button>
+					<!--根据用户是否登录，动态显示"我要发布"按钮，点击"我要发布"，弹出框发布帖子-->
+					<button type="button" class="btn btn-primary btn-sm position-absolute rt-0"
+							data-toggle="modal" data-target="#publishModal" th:if="${loginUser != null}">我要发布</button>
 				</div>
 
-				<!-- 弹出框 -->
+				<!-- 弹出框，在index.js文件中编写业务逻辑 -->
 				<div class="modal fade" id="publishModal" tabindex="-1" role="dialog" aria-labelledby="publishModalLabel" aria-hidden="true">
 					<div class="modal-dialog modal-lg" role="document">
 						<div class="modal-content">
@@ -136,7 +138,7 @@
 								<ul class="d-inline float-right">
 									<li class="d-inline ml-2">赞 11</li>
 									<li class="d-inline ml-2">|</li>
-									<li class="d-inline ml-2">回帖 7</li>
+									<li class="d-inline ml-2">回帖 <span th:text="${map.discussPost.commentCount}">7</span></li>
 								</ul>
 							</div>
 						</div>

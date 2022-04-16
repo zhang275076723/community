@@ -42,16 +42,20 @@ public class HomeController {
                                Model model) {
         //帖子分页
         PageHelper.startPage(pageNum, 10);
+        //userId为0，表示查询全部帖子
         List<DiscussPost> discussPosts = discussPostService.findDiscussPosts(0);
         PageInfo<DiscussPost> pageInfo = new PageInfo<>(discussPosts, 5);
         model.addAttribute("pageInfo", pageInfo);
 
-        //存放用户和帖子信息
+        //用户和帖子对应
         List<Map<String,Object>> discussPostAndUserList = new ArrayList<>();
         for (DiscussPost discussPost : discussPosts) {
+            //存放对应关系
             Map<String, Object> map = new HashMap<>();
             User user = userService.findUserById(discussPost.getUserId());
+            //用户
             map.put("user", user);
+            //帖子
             map.put("discussPost", discussPost);
             discussPostAndUserList.add(map);
         }

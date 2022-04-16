@@ -9,7 +9,7 @@ import java.util.Date;
 /**
  * @Date 2022/4/3 19:31
  * @Author zsy
- * @Description
+ * @Description 帖子
  */
 @Data
 @NoArgsConstructor
@@ -24,6 +24,7 @@ public class DiscussPost {
     //帖子状态，0-正常，1-精华，2-拉黑
     private Integer status;
     private Date createTime;
+    //帖子评论数量
     private Integer commentCount;
     private Double score;
 }

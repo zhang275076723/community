@@ -30,4 +30,14 @@ public class CommunityConstant {
      * 记住状态的用户登录凭证超时时间，100天
      */
     public static int REMEMBER_EXPIRED_SECONDS = 3600 * 24 * 100;
+
+    /**
+     * 评论类型，1-帖子的评论
+     */
+    public static int ENTITY_TYPE_DISCUSSPOST = 1;
+
+    /**
+     * 评论类型，2-帖子评论的评论
+     */
+    public static int ENTITY_TYPE_COMMENT = 2;
 }
