@@ -156,7 +156,7 @@
 										<!--情况二：对帖子评论进行回复-->
 										<span th:if="${comment2CommentMap.targetUser != null}">
 											<i th:utext="${comment2CommentMap.user.username}">Sisii</i>&nbsp;回复
-											<b class="text-info" th:utext="${comment2CommentMap.target.username}">寒江雪</b>:&nbsp;&nbsp;
+											<b class="text-info" th:utext="${comment2CommentMap.targetUser.username}">寒江雪</b>:&nbsp;&nbsp;
 										</span>
 										<span th:utext="${comment2CommentMap.comment2Comment.content}">这个是直播时间哈，觉得晚的话可以直接看之前的完整录播的~</span>
 									</div>

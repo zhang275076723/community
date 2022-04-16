@@ -79,7 +79,7 @@ public class DiscussPostController {
         //帖子评论
         List<Comment> commentList = commentService.findCommentsByEntity(
                 CommunityConstant.ENTITY_TYPE_DISCUSSPOST, discussPost.getId());
-        PageInfo<Comment> pageInfo = new PageInfo<>(commentList, 3);
+        PageInfo<Comment> pageInfo = new PageInfo<>(commentList, 5);
         model.addAttribute("pageInfo", pageInfo);
 
         //帖子评论、用户、帖子评论的评论数量、帖子评论的评论对应
