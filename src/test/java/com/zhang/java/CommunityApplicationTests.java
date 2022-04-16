@@ -6,6 +6,7 @@ import com.zhang.java.domain.DiscussPost;
 import com.zhang.java.mapper.LoginTicketMapper;
 import com.zhang.java.mapper.UserMapper;
 import com.zhang.java.service.DiscussPostService;
+import com.zhang.java.service.Impl.TestService;
 import com.zhang.java.util.MailClient;
 import com.zhang.java.util.SensitiveFilter;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootTest
@@ -96,5 +98,12 @@ class CommunityApplicationTests implements ApplicationContextAware {
         SensitiveFilter sensitiveFilter = (SensitiveFilter) applicationContext.getBean("sensitiveFilter");
         String text = "碰❤瓷嫖❤娼，卖艺❤卖❤淫❤";
         System.out.println(sensitiveFilter.filterSensitiveWords(text));
+    }
+
+    @Test
+    public void testTransaction() {
+        TestService testService = applicationContext.getBean("testService", TestService.class);
+        Object save = testService.save();
+        System.out.println(save);
     }
 }
