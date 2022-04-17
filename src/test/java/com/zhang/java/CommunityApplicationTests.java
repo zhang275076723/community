@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zhang.java.domain.DiscussPost;
 import com.zhang.java.mapper.LoginTicketMapper;
+import com.zhang.java.mapper.MessageMapper;
 import com.zhang.java.mapper.UserMapper;
 import com.zhang.java.service.DiscussPostService;
 import com.zhang.java.service.Impl.TestService;
@@ -105,5 +106,16 @@ class CommunityApplicationTests implements ApplicationContextAware {
         TestService testService = applicationContext.getBean("testService", TestService.class);
         Object save = testService.save();
         System.out.println(save);
+    }
+
+    @Test
+    public void testMessageMapper(){
+        MessageMapper messageMapper = applicationContext.getBean("messageMapper", MessageMapper.class);
+        System.out.println(messageMapper.selectConversations(111));
+        System.out.println(messageMapper.selectConversationCount(111));
+        System.out.println(messageMapper.selectLetters("111_112"));
+        System.out.println(messageMapper.selectLetterCount("111_112"));
+        System.out.println(messageMapper.selectLetterUnreadCount(111, "111_112"));
+        System.out.println(messageMapper.selectLetterUnreadCount(111, null));
     }
 }

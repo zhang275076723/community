@@ -13,7 +13,7 @@
         order by type desc, create_time desc
     </select>
 
-    <select id="selectDiscussPostRows">
+    <select id="selectDiscussPostRows" resultType="integer">
         select count(id) from discuss_post where status != 2
         <if test="userId != 0">
             and user_id = #{userId}

@@ -16,6 +16,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {
+    //id为1，表示系统管理员
     private Integer id;
     private String username;
     private String password;

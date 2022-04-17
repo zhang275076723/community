@@ -18,7 +18,7 @@
         order by create_time desc
     </select>
 
-    <select id="selectCommentsCountByEntity" resultType="int">
+    <select id="selectCommentsCountByEntity" resultType="integer">
         select count(id) from comment
         where status = 0 and entity_type = #{entityType} and entity_id = #{entityId}
     </select>

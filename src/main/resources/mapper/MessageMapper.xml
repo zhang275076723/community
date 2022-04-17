@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zhang.java.mapper.MessageMapper">
+    <sql id="selectFields">
+        id, from_id, to_id, conversation_id, content, status, create_time
+    </sql>
+
+    <sql id="insertFields">
+        from_id, to_id, conversation_id, content, status, create_time
+    </sql>
+
+    <select id="selectConversations" resultType="message">
+        select <include refid="selectFields"/> from message
+        where id in (
+            <!--找每个私信列表中最新一条私信id-->
+            select max(id) from message
+            where status != 2 and from_id != 1 and (from_id = #{userId} or to_id = #{userId})
+            group by conversation_id
+        )
+        order by create_time desc
+    </select>
+
+    <select id="selectConversationCount" resultType="integer">
+        select count(max_id) from (
+            <!--找每个私信列表中最新一条私信id-->
+            select max(id) as max_id from message
+            where status != 2 and from_id != 1 and (from_id = #{userId} or to_id = #{userId})
+            group by conversation_id
+        ) as conversion
+    </select>
+
+    <select id="selectLetters" resultType="message">
+        select <include refid="selectFields"/> from message
+        where status != 2 and from_id != 1 and conversation_id = #{conversationId}
+        order by create_time desc
+    </select>
+
+    <select id="selectLetterCount" resultType="integer">
+        select count(id) from message
+        where status != 2 and from_id != 1 and conversation_id = #{conversationId}
+    </select>
+
+    <!--select语句必须写resultType或resultMap-->
+    <select id="selectLetterUnreadCount" resultType="integer">
+        select count(id) from message
+        where status = 0 and from_id != 1 and to_id = #{userId}
+        <if test="conversationId != null and conversationId != ''">
+            and conversation_id = #{conversationId}
+        </if>
+    </select>
+
+</mapper>
