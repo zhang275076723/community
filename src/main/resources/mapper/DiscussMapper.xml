@@ -29,4 +29,8 @@
     <select id="selectDiscussPostById" resultType="DiscussPost">
         select * from discuss_post where id = #{id}
     </select>
+
+    <update id="updateDiscussPostCommentCountById">
+        update discuss_post set comment_count = #{commentCount} where id = #{id}
+    </update>
 </mapper>

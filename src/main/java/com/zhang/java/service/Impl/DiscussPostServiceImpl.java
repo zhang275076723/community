@@ -61,4 +61,9 @@ public class DiscussPostServiceImpl implements DiscussPostService {
     public DiscussPost findDiscussPostById(Integer id) {
         return discussPostMapper.selectDiscussPostById(id);
     }
+
+    @Override
+    public Integer updateDiscussPostCommentCountById(Integer id, Integer commentCount) {
+        return discussPostMapper.updateDiscussPostCommentCountById(id, commentCount);
+    }
 }

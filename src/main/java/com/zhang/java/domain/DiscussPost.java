@@ -24,7 +24,7 @@ public class DiscussPost {
     //帖子状态，0-正常，1-精华，2-拉黑
     private Integer status;
     private Date createTime;
-    //帖子评论数量
+    //帖子评论数量，不包括评论的评论
     private Integer commentCount;
     private Double score;
 }
