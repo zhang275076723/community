@@ -53,6 +53,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User findUserByName(String username) {
+        return userMapper.selectUserByName(username);
+    }
+
+    @Override
     public Map<String, Object> login(String username, String password, Integer expiredSeconds) {
         Map<String, Object> map = new HashMap<>();
 
@@ -192,4 +197,5 @@ public class UserServiceImpl implements UserService {
         password = CommunityUtil.encodeMD5(password + user.getSalt());
         return userMapper.updateUserPassword(id, password);
     }
+
 }

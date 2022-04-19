@@ -19,4 +19,8 @@ public interface MessageService {
     Integer findLetterCount(String conversationId);
 
     Integer findLetterUnreadCount(Integer userId, String conversationId);
+
+    Integer addMessage(Message message);
+
+    Integer readUnReadMessage(List<Integer> ids);
 }

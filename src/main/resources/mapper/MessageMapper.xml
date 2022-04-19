@@ -52,4 +52,16 @@
         </if>
     </select>
 
+    <insert id="insertMessage" useGeneratedKeys="true" keyProperty="id">
+        insert into message(<include refid="insertFields"/>)
+        values(#{fromId}, #{toId}, #{conversationId}, #{content}, #{status}, #{createTime})
+    </insert>
+
+    <update id="updateMessageStatus">
+        update message set status = #{status} where id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </update>
+
 </mapper>

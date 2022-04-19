@@ -13,6 +13,8 @@ import java.util.Map;
 public interface UserService {
     User findUserById(Integer id);
 
+    User findUserByName(String username);
+
     Map<String, Object> login(String username, String password, Integer expiredSeconds);
 
     void logout(String ticket);
@@ -26,4 +28,5 @@ public interface UserService {
     Integer updateHeader(Integer id, String headerUrl);
 
     Integer updatePassword(Integer id, String password);
+
 }

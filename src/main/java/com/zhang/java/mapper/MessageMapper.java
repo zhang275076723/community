@@ -60,4 +60,22 @@ public interface MessageMapper {
     Integer selectLetterUnreadCount(@Param("userId") Integer userId,
                                     @Param("conversationId") String conversationId);
 
+    /**
+     * 添加私信
+     *
+     * @param message
+     * @return
+     */
+    Integer insertMessage(Message message);
+
+    /**
+     * 修改私信列表中所有私信的状态
+     *
+     * @param ids
+     * @param status
+     * @return
+     */
+    Integer updateMessageStatus(@Param("ids") List<Integer> ids,
+                                @Param("status") Integer status);
+
 }

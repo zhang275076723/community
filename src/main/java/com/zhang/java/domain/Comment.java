@@ -9,7 +9,7 @@ import java.util.Date;
 /**
  * @Date 2022/4/16 16:25
  * @Author zsy
- * @Description 评论
+ * @Description 评论，包括帖子评论和帖子评论的评论
  */
 @Data
 @AllArgsConstructor

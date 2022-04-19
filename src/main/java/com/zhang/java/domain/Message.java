@@ -21,7 +21,7 @@ public class Message {
     //私信双方，111-112
     private String conversationId;
     private String content;
-    //私信状态，0-未读，1-已读，2-删除
+    //接收方的私信状态，0-未读，1-已读，2-删除
     private int status;
     private Date createTime;
 }

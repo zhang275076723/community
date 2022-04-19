@@ -6,19 +6,14 @@ import com.zhang.java.domain.Message;
 import com.zhang.java.domain.User;
 import com.zhang.java.service.MessageService;
 import com.zhang.java.service.UserService;
+import com.zhang.java.util.CommunityUtil;
 import com.zhang.java.util.HostHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Date 2022/4/17 17:10
@@ -76,7 +71,7 @@ public class MessageController {
         return "/site/letter";
     }
 
-    //查询私信列表中私信详情
+    //点击私信列表，查询私信列表中的全部私信详情
     @GetMapping("/letter/list/{conversationId}")
     public String getLetterList(@RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                 @PathVariable("conversationId") String conversationId, Model model) {
@@ -98,18 +93,56 @@ public class MessageController {
         model.addAttribute("letterList", letterList);
 
         //当前用户所私信的目标用户
-        String[] ids = conversationId.split("_");
+        String[] strId = conversationId.split("_");
         //Integer需要用equals比较是否相等
-        if (hostHolder.getUser().getId().equals(Integer.parseInt(ids[0]))) {
-            model.addAttribute("targetUser", userService.findUserById(Integer.parseInt(ids[1])));
+        if (hostHolder.getUser().getId().equals(Integer.parseInt(strId[0]))) {
+            model.addAttribute("targetUser", userService.findUserById(Integer.parseInt(strId[1])));
         } else {
-            model.addAttribute("targetUser", userService.findUserById(Integer.parseInt(ids[0])));
+            model.addAttribute("targetUser", userService.findUserById(Integer.parseInt(strId[0])));
         }
 
-        //私信双方，用于分页跳转
+        //model添加私信双方，用于分页跳转
         model.addAttribute("conversationId", conversationId);
 
+        //将私信列表中的全部私信设置为已读
+        List<Integer> ids = new ArrayList<>();
+        for (Message message : letters) {
+            if (message.getStatus() == 0 && message.getToId() == hostHolder.getUser().getId()) {
+                ids.add(message.getId());
+            }
+        }
+        if (!ids.isEmpty()) {
+            messageService.readUnReadMessage(ids);
+        }
+
         return "/site/letter-detail";
+    }
+
+    @PostMapping("/send")
+    @ResponseBody
+    public String sendMessage(@RequestParam("toName") String toName,
+                              @RequestParam("content") String content) {
+        User user = hostHolder.getUser();
+
+        User target = userService.findUserByName(toName);
+        if (target == null) {
+            return CommunityUtil.getJSONString(1, "私信对方用户不存在！", null);
+        }
+
+        Message message = new Message();
+        message.setFromId(user.getId());
+        message.setToId(target.getId());
+        if (message.getFromId() < message.getToId()) {
+            message.setConversationId(message.getFromId() + "_" + message.getToId());
+        } else {
+            message.setConversationId(message.getToId() + "_" + message.getFromId());
+        }
+        message.setContent(content);
+        message.setStatus(0);
+        message.setCreateTime(new Date());
+        messageService.addMessage(message);
+
+        return CommunityUtil.getJSONString(0, "私信发送成功！", null);
     }
 
 }
