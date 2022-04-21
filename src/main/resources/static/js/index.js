@@ -34,7 +34,7 @@ function publish() {
         },
 
         error: function () {
-            alert("服务器错误");
+            alert("服务器错误！");
         }
     });
 
