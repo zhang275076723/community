@@ -1,4 +1,4 @@
-package com.zhang.java.service.Impl;
+package com.zhang.java.service.impl;
 
 import com.zhang.java.domain.DiscussPost;
 import com.zhang.java.domain.User;

@@ -15,7 +15,7 @@ import java.io.PrintWriter;
 /**
  * @Date 2022/4/21 19:24
  * @Author zsy
- * @Description 异常处理类，普通请求错误跳转到500页面，ajax请求错误提示错误消息
+ * @Description 异常处理类，普通请求错误跳转到500页面，ajax请求错误提示错误消息，没有匹配的请求跳转到404页面
  */
 @ControllerAdvice(annotations = Controller.class)
 public class ExceptionAdvice {
@@ -45,6 +45,7 @@ public class ExceptionAdvice {
         } else {
             //普通请求
             try {
+                //默认错误页面
                 response.sendRedirect(request.getContextPath() + "/error");
             } catch (IOException ex) {
                 logger.error("普通请求异常：" + ex.getMessage());

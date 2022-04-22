@@ -7,7 +7,7 @@ import com.zhang.java.mapper.LoginTicketMapper;
 import com.zhang.java.mapper.MessageMapper;
 import com.zhang.java.mapper.UserMapper;
 import com.zhang.java.service.DiscussPostService;
-import com.zhang.java.service.Impl.TestService;
+import com.zhang.java.service.impl.TestService;
 import com.zhang.java.util.MailClient;
 import com.zhang.java.util.SensitiveFilter;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootTest
