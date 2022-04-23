@@ -17,6 +17,12 @@ import org.springframework.beans.BeansException;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.core.RedisOperations;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.test.context.ContextConfiguration;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -108,7 +114,7 @@ class CommunityApplicationTests implements ApplicationContextAware {
     }
 
     @Test
-    public void testMessageMapper(){
+    public void testMessageMapper() {
         MessageMapper messageMapper = applicationContext.getBean("messageMapper", MessageMapper.class);
         System.out.println(messageMapper.selectConversations(111));
         System.out.println(messageMapper.selectConversationCount(111));
@@ -116,5 +122,81 @@ class CommunityApplicationTests implements ApplicationContextAware {
         System.out.println(messageMapper.selectLetterCount("111_112"));
         System.out.println(messageMapper.selectLetterUnreadCount(111, "111_112"));
         System.out.println(messageMapper.selectLetterUnreadCount(111, null));
+    }
+
+    @Test
+    public void testRedis() {
+        RedisTemplate redisTemplate = applicationContext.getBean("redisTemplate", RedisTemplate.class);
+        System.out.println(redisTemplate);
+        System.out.println("------------------------------------------------------------");
+
+        //string
+        String redisKey = "test:count";
+        redisTemplate.opsForValue().set(redisKey, 1);
+        System.out.println(redisTemplate.opsForValue().get(redisKey));
+        System.out.println(redisTemplate.opsForValue().increment(redisKey));
+        System.out.println("------------------------------------------------------------");
+
+        //list
+        redisKey = "test:ids";
+        redisTemplate.opsForList().leftPush(redisKey, 1001);
+        redisTemplate.opsForList().leftPush(redisKey, 1002);
+        redisTemplate.opsForList().rightPush(redisKey, 1003);
+        redisTemplate.opsForList().set(redisKey, 0, 1009);
+        System.out.println(redisTemplate.opsForList().rightPop(redisKey));
+        System.out.println(redisTemplate.opsForList().size(redisKey));
+        System.out.println(redisTemplate.opsForList().range(redisKey, 0, 1));
+        System.out.println("------------------------------------------------------------");
+
+        //hash
+        redisKey = "test:user";
+        redisTemplate.opsForHash().put(redisKey, "username", "Kat");
+        redisTemplate.opsForHash().put(redisKey, "password", 123);
+        System.out.println(redisTemplate.opsForHash().get(redisKey, "username"));
+        System.out.println(redisTemplate.opsForHash().values(redisKey));
+        System.out.println("------------------------------------------------------------");
+
+        //set
+        redisKey = "test:teachers";
+        redisTemplate.opsForSet().add(redisKey, "刘备", "关羽", "张飞", "赵云", "诸葛亮");
+        System.out.println(redisTemplate.opsForSet().pop(redisKey));
+        System.out.println(redisTemplate.opsForSet().members(redisKey));
+        System.out.println("------------------------------------------------------------");
+
+        //zset
+        redisKey = "test:students";
+        redisTemplate.opsForZSet().add(redisKey, "唐僧", 80);
+        redisTemplate.opsForZSet().add(redisKey, "悟空", 90);
+        redisTemplate.opsForZSet().add(redisKey, "八戒", 50);
+        redisTemplate.opsForZSet().add(redisKey, "沙僧", 70);
+        redisTemplate.opsForZSet().add(redisKey, "白龙马", 60);
+        System.out.println(redisTemplate.opsForZSet().reverseRange(redisKey, 0, 2));
+        System.out.println(redisTemplate.opsForZSet().rank(redisKey, "悟空"));
+        System.out.println(redisTemplate.opsForZSet().score(redisKey, "沙僧"));
+        System.out.println(redisTemplate.opsForZSet().zCard(redisKey));
+        System.out.println("------------------------------------------------------------");
+
+        //key
+        redisKey = "test:count";
+        System.out.println(redisTemplate.type(redisKey));
+        System.out.println(redisTemplate.keys("*"));
+        System.out.println("------------------------------------------------------------");
+
+        //transaction
+        Object result = redisTemplate.execute(new SessionCallback() {
+            @Override
+            public Object execute(RedisOperations operations) throws DataAccessException {
+                String redisKey = "test:tx";
+                //开启事务
+                operations.multi();
+                operations.opsForSet().add(redisKey, "sid", "tom", "jack");
+                //事务中进行查询，无效
+                System.out.println(operations.opsForSet().members(redisKey));
+                //提交事务
+                return operations.exec();
+            }
+        });
+        System.out.println(result);
+        System.out.println("------------------------------------------------------------");
     }
 }
