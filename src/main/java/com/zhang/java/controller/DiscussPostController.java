@@ -8,6 +8,7 @@ import com.zhang.java.domain.DiscussPost;
 import com.zhang.java.domain.User;
 import com.zhang.java.service.CommentService;
 import com.zhang.java.service.DiscussPostService;
+import com.zhang.java.service.LikeService;
 import com.zhang.java.service.UserService;
 import com.zhang.java.util.CommunityConstant;
 import com.zhang.java.util.CommunityUtil;
@@ -37,6 +38,9 @@ public class DiscussPostController {
     private CommentService commentService;
 
     @Autowired
+    private LikeService likeService;
+
+    @Autowired
     private HostHolder hostHolder;
 
     @PostMapping("/add")
@@ -63,16 +67,29 @@ public class DiscussPostController {
         return CommunityUtil.getJSONString(0, "发布成功！", null);
     }
 
-    @GetMapping("/detail/{id}")
-    public String getDiscussPost(@PathVariable("id") Integer id,
+    @GetMapping("/detail/{discussPostId}")
+    public String getDiscussPost(@PathVariable("discussPostId") Integer discussPostId,
                                  @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                  Model model) {
-        //帖子和用户信息
-        DiscussPost discussPost = discussPostService.findDiscussPostById(id);
-        User user = userService.findUserById(discussPost.getUserId());
-        //将帖子和用户放入model，前端获取
+        User user = hostHolder.getUser();
+
+        //帖子和帖子发布用户信息
+        DiscussPost discussPost = discussPostService.findDiscussPostById(discussPostId);
+        User discussPostUser = userService.findUserById(discussPost.getUserId());
+        //将帖子和帖子发布用户放入model，前端获取
         model.addAttribute("discussPost", discussPost);
-        model.addAttribute("user", user);
+        model.addAttribute("user", discussPostUser);
+
+        //帖子的点赞数量
+        model.addAttribute("discussPostLikeCount", likeService.findEntityLikeCount(
+                CommunityConstant.ENTITY_TYPE_DISCUSSPOST, discussPostId));
+        //用户对帖子的点赞状态，0-未点赞，1-点赞，-1-点踩
+        if (user == null) {
+            model.addAttribute("discussPostLikeStatus", 0);
+        } else {
+            model.addAttribute("discussPostLikeStatus", likeService.findEntityLikeStatus(
+                    user.getId(), CommunityConstant.ENTITY_TYPE_DISCUSSPOST, discussPostId));
+        }
 
         //帖子评论分页
         PageHelper.startPage(pageNum, 5);
@@ -82,18 +99,29 @@ public class DiscussPostController {
         PageInfo<Comment> pageInfo = new PageInfo<>(commentList, 5);
         model.addAttribute("pageInfo", pageInfo);
 
-        //帖子评论、用户、帖子评论的评论数量、帖子评论的评论对应
+        //帖子评论、帖子评论发布用户、帖子评论的评论数量、帖子评论的评论对应
         List<Map<String, Object>> commentsList = new ArrayList<>();
         for (Comment comment : commentList) {
-            //帖子评论、用户、帖子回复数量对应
+            //帖子评论、帖子评论发布用户、帖子回复数量对应
             Map<String, Object> map = new HashMap<>();
             //帖子评论
             map.put("comment", comment);
-            //帖子评论用户
+            //帖子评论发布用户
             map.put("user", userService.findUserById(comment.getUserId()));
             //帖子评论的评论数量
             map.put("replyCount", commentService.findCommentsCount(
                     CommunityConstant.ENTITY_TYPE_COMMENT, comment.getId()));
+
+            //帖子评论的点赞数量
+            map.put("commentLikeCount", likeService.findEntityLikeCount(
+                    CommunityConstant.ENTITY_TYPE_COMMENT, comment.getId()));
+            //用户对帖子评论的点赞状态，0-未点赞，1-点赞，-1-点踩
+            if (user == null) {
+                map.put("commentLikeStatus", 0);
+            } else {
+                map.put("commentLikeStatus", likeService.findEntityLikeStatus(
+                        user.getId(), CommunityConstant.ENTITY_TYPE_COMMENT, comment.getId()));
+            }
 
             //帖子评论的评论
             List<Comment> list = commentService.findCommentsByEntity(
@@ -106,6 +134,17 @@ public class DiscussPostController {
                 comment2CommentMap.put("comment2Comment", comment2Comment);
                 //帖子评论的评论用户
                 comment2CommentMap.put("user", userService.findUserById(comment2Comment.getUserId()));
+
+                //帖子评论的评论的点赞数量
+                comment2CommentMap.put("comment2CommentLikeCount", likeService.findEntityLikeCount(
+                        CommunityConstant.ENTITY_TYPE_COMMENT, comment2Comment.getId()));
+                //用户对帖子评论的评论的点赞状态，0-未点赞，1-点赞，-1-点踩
+                if (user == null) {
+                    comment2CommentMap.put("comment2CommentLikeStatus", 0);
+                } else {
+                    comment2CommentMap.put("comment2CommentLikeStatus", likeService.findEntityLikeStatus(
+                            user.getId(), CommunityConstant.ENTITY_TYPE_COMMENT, comment2Comment.getId()));
+                }
 
                 //帖子评论的评论回复用户
                 if (comment2Comment.getTargetId() == 0) {

@@ -6,12 +6,15 @@ import com.github.pagehelper.PageInfo;
 import com.zhang.java.domain.DiscussPost;
 import com.zhang.java.domain.User;
 import com.zhang.java.service.DiscussPostService;
+import com.zhang.java.service.LikeService;
 import com.zhang.java.service.UserService;
+import com.zhang.java.util.CommunityConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
@@ -32,9 +35,17 @@ public class HomeController {
     @Autowired
     private DiscussPostService discussPostService;
 
+    @Autowired
+    private LikeService likeService;
+
     @RequestMapping("/")
-    public String homePage(){
+    public String homePage() {
         return "redirect:/index";
+    }
+
+    @GetMapping("/error")
+    public String getErrorPage() {
+        return "/error/500";
     }
 
     @GetMapping("/index")
@@ -48,7 +59,7 @@ public class HomeController {
         model.addAttribute("pageInfo", pageInfo);
 
         //用户和帖子对应
-        List<Map<String,Object>> discussPostAndUserList = new ArrayList<>();
+        List<Map<String, Object>> discussPostAndUserList = new ArrayList<>();
         for (DiscussPost discussPost : discussPosts) {
             //存放对应关系
             Map<String, Object> map = new HashMap<>();
@@ -57,6 +68,9 @@ public class HomeController {
             map.put("user", user);
             //帖子
             map.put("discussPost", discussPost);
+            //帖子的点赞数量
+            map.put("discussPostLikeCount", likeService.findEntityLikeCount(
+                    CommunityConstant.ENTITY_TYPE_DISCUSSPOST, discussPost.getId()));
             discussPostAndUserList.add(map);
         }
         model.addAttribute("discussPostAndUserList", discussPostAndUserList);

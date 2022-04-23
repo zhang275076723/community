@@ -14,7 +14,7 @@ import java.lang.reflect.Method;
 /**
  * @Date 2022/4/13 17:24
  * @Author zsy
- * @Description
+ * @Description 使用自定义注解实现登录拦截
  */
 @Component
 public class LoginRequiredInterceptor implements HandlerInterceptor {

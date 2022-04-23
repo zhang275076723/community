@@ -83,7 +83,13 @@
 						<div class="text-muted mt-3">
 							发布于 <b th:text="${#dates.format(discussPost.createTime, 'yyyy-MM-dd HH:mm:ss')}">2019-04-15 15:32:18</b>
 							<ul class="d-inline float-right">
-								<li class="d-inline ml-2"><a href="#" class="text-primary">赞 11</a></li>
+								<li class="d-inline ml-2">
+									<!--帖子的点赞，entityType为1-->
+									<a href="javascript:;"  th:onclick="|like(this, 1, ${discussPost.id})|" class="text-primary">
+										<b th:text="${discussPostLikeStatus == 1 ? '已赞' : '赞'}">赞</b>&nbsp;
+										<i th:text="${discussPostLikeCount}">11</i>
+									</a>
+								</li>
 								<li class="d-inline ml-2">|</li>
 								<li class="d-inline ml-2">
 									<a href="#replyform" class="text-primary">回帖 <i th:text="${discussPost.commentCount}">7</i></a>
@@ -91,7 +97,7 @@
 							</ul>
 						</div>
 					</div>
-				</div>	
+				</div>
 				<!-- 正文 -->
 				<div class="mt-4 mb-3 content" th:utext="${discussPost.content}">
 					金三银四的金三已经到了，你还沉浸在过年的喜悦中吗？
@@ -136,7 +142,11 @@
 								</span>
 								<ul class="d-inline float-right">
 									<li class="d-inline ml-2">
-										<a href="#" class="text-primary">赞(1)</a>
+										<!--帖子评论的点赞，entityType为2-->
+										<a href="javascript:;"  th:onclick="|like(this, 2, ${map.comment.id})|" class="text-primary">
+											<b th:text="${map.commentLikeStatus == 1 ? '已赞' : '赞'}">赞</b>
+											(<i th:text="${map.commentLikeCount}">1</i>)
+										</a>
 									</li>
 									<li class="d-inline ml-2">|</li>
 									<li class="d-inline ml-2">
@@ -149,11 +159,11 @@
 								<!-- 回复 -->
 								<li class="pb-3 pt-3 mb-3 border-bottom" th:each="comment2CommentMap:${map.comment2CommentList}">
 									<div>
-										<!--情况一：对帖子评论进行评论-->
+										<!--情况一：对帖子评论进行评论，不需要目标回复用户-->
 										<span th:if="${comment2CommentMap.targetUser == null}">
 											<b class="text-info" th:utext="${comment2CommentMap.user.username}">寒江雪</b>:&nbsp;&nbsp;
 										</span>
-										<!--情况二：对帖子评论进行回复-->
+										<!--情况二：对帖子评论进行回复，需要目标回复用户-->
 										<span th:if="${comment2CommentMap.targetUser != null}">
 											<i th:utext="${comment2CommentMap.user.username}">Sisii</i>&nbsp;回复
 											<b class="text-info" th:utext="${comment2CommentMap.targetUser.username}">寒江雪</b>:&nbsp;&nbsp;
@@ -163,7 +173,13 @@
 									<div class="mt-3">
 										<span th:text="${#dates.format(comment2CommentMap.comment2Comment.createTime, 'yyyy-MM-dd HH:mm:ss')}">2019-04-15 15:32:18</span>
 										<ul class="d-inline float-right">
-											<li class="d-inline ml-2"><a href="#" class="text-primary">赞(1)</a></li>
+											<li class="d-inline ml-2">
+                                                <!--帖子评论的评论的点赞，entityType为2-->
+												<a href="javascript:;"  th:onclick="|like(this, 2, ${comment2CommentMap.comment2Comment.id})|" class="text-primary">
+													<b th:text="${comment2CommentMap.comment2CommentLikeStatus == 1 ? '已赞' : '赞'}">赞</b>
+													(<i th:text="${comment2CommentMap.comment2CommentLikeCount}">1</i>)
+												</a>
+											</li>
 											<li class="d-inline ml-2">|</li>
 											<li class="d-inline ml-2"><a th:href="|#huifu-${comment2CommentMapStat.count}|" data-toggle="collapse" class="text-primary">回复</a></li>
 										</ul>
@@ -185,7 +201,7 @@
 												</div>
 											</form>
 										</div>
-									</div>								
+									</div>
 								</li>
 								<!-- 情况一：帖子评论的评论 -->
 								<li class="pb-3 pt-3">
@@ -318,5 +334,6 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
 	<script th:src="@{/js/global.js}"></script>
+	<script th:src="@{/js/discussPost.js}"></script>
 </body>
 </html>

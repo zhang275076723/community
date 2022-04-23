@@ -45,7 +45,7 @@ public class ExceptionAdvice {
         } else {
             //普通请求
             try {
-                //默认错误页面
+                //重定向到错误处理请求
                 response.sendRedirect(request.getContextPath() + "/error");
             } catch (IOException ex) {
                 logger.error("普通请求异常：" + ex.getMessage());

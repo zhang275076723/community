@@ -16,7 +16,7 @@ function publish() {
         method: "post",
         contentType: "application/json;charset=utf-8",//发送给服务器的数据类型
         data: JSON.stringify({"title": title, "content": content}),//发送的数据为json字符串，方法参数使用@RequestBody接收，还要设置contentType
-        // data:{"title": title,"content": content},//js对象，方法参数使用@RequestParam接收
+        // data:{"title": title,"content": content},//发送的数据为js对象，方法参数使用@RequestParam接收
 
         //data为服务器返回的数据
         success: function (data) {
