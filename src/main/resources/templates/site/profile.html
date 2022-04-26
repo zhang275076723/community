@@ -82,7 +82,7 @@
 						<h5 class="mt-0 text-warning">
 							<span th:utext="${user.username}">nowcoder</span>
 							<!--隐藏域为关注方法传入entityId-->
-							<input type="hidden" id="entityId" th:value="${user.id}"/>
+							<input type="hidden" id="entityId" th:value="${user.id}">
 							<!--关注方法在profile.js-->
 							<!--根据isFollowed判断是"已关注"还是"关注TA"-->
 							<!--当用户没有登录，或当前登录用户就是要关注的用户时，不显示关注按钮-->
