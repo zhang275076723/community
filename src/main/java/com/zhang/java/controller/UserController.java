@@ -2,8 +2,10 @@ package com.zhang.java.controller;
 
 import com.zhang.java.annotation.LoginRequired;
 import com.zhang.java.domain.User;
+import com.zhang.java.service.FollowService;
 import com.zhang.java.service.LikeService;
 import com.zhang.java.service.UserService;
+import com.zhang.java.util.CommunityConstant;
 import com.zhang.java.util.CommunityUtil;
 import com.zhang.java.util.HostHolder;
 import org.apache.commons.lang3.StringUtils;
@@ -38,6 +40,9 @@ public class UserController {
 
     @Autowired
     private LikeService likeService;
+
+    @Autowired
+    private FollowService followService;
 
     @Value("${server.servlet.context-path}")
     //项目路径名
@@ -177,6 +182,19 @@ public class UserController {
         // 点赞数量
         int likeCount = likeService.findUserLikeCount(userId);
         model.addAttribute("likeCount", likeCount);
+        // 关注数量
+        long followeeCount = followService.findFolloweeCount(userId, CommunityConstant.ENTITY_TYPE_USER);
+        model.addAttribute("followeeCount", followeeCount);
+        // 粉丝数量
+        long followerCount = followService.findFollowerCount(CommunityConstant.ENTITY_TYPE_USER, userId);
+        model.addAttribute("followerCount", followerCount);
+        // 是否已关注
+        boolean isFollowed = false;
+        if (hostHolder.getUser() != null) {
+            isFollowed = followService.isFollowed(hostHolder.getUser().getId(),
+                    CommunityConstant.ENTITY_TYPE_USER, userId);
+        }
+        model.addAttribute("isFollowed", isFollowed);
 
         return "/site/profile";
     }
