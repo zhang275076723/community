@@ -16,6 +16,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class Comment {
     private Integer id;
+    //发表评论的用户id
     private Integer userId;
     //评论实体类型，1-帖子的评论，2-帖子评论的评论
     private Integer entityType;

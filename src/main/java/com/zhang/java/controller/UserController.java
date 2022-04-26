@@ -2,6 +2,7 @@ package com.zhang.java.controller;
 
 import com.zhang.java.annotation.LoginRequired;
 import com.zhang.java.domain.User;
+import com.zhang.java.service.LikeService;
 import com.zhang.java.service.UserService;
 import com.zhang.java.util.CommunityUtil;
 import com.zhang.java.util.HostHolder;
@@ -34,6 +35,9 @@ public class UserController {
 
     @Autowired
     private HostHolder hostHolder;
+
+    @Autowired
+    private LikeService likeService;
 
     @Value("${server.servlet.context-path}")
     //项目路径名
@@ -159,5 +163,21 @@ public class UserController {
         userService.updatePassword(user.getId(), newPassword);
 
         return "redirect:/index";
+    }
+
+    @GetMapping("/profile/{userId}")
+    public String profile(@PathVariable("userId") int userId, Model model) {
+        User user = userService.findUserById(userId);
+        if (user == null) {
+            throw new RuntimeException("该用户不存在！");
+        }
+
+        // 用户
+        model.addAttribute("user", user);
+        // 点赞数量
+        int likeCount = likeService.findUserLikeCount(userId);
+        model.addAttribute("likeCount", likeCount);
+
+        return "/site/profile";
     }
 }

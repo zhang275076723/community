@@ -16,6 +16,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class DiscussPost {
     private Integer id;
+    //创建帖子的用户id
     private Integer userId;
     private String title;
     private String content;

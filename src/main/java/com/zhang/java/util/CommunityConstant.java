@@ -37,7 +37,7 @@ public class CommunityConstant {
     public static int ENTITY_TYPE_DISCUSSPOST = 1;
 
     /**
-     * 评论类型，2-帖子评论的评论
+     * 评论类型，2-帖子评论的评论和帖子评论的回复
      */
     public static int ENTITY_TYPE_COMMENT = 2;
 }

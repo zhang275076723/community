@@ -26,12 +26,20 @@ public class LikeController {
     @Autowired
     private HostHolder hostHolder;
 
+    /**
+     * 用户点赞，保证实体赞和用户实体赞对应
+     *
+     * @param entityType   实体类型
+     * @param entityId     实体id
+     * @param entityUserId 实体用户id，即当前实体是由哪个用户所创建的
+     * @return
+     */
     @PostMapping("/like")
     @ResponseBody
     @LoginRequired
-    public String like(int entityType, int entityId) {
+    public String like(int entityType, int entityId, int entityUserId) {
         User user = hostHolder.getUser();
-        likeService.like(user.getId(), entityType, entityId);
+        likeService.like(user.getId(), entityType, entityId, entityUserId);
         long entityLikeCount = likeService.findEntityLikeCount(entityType, entityId);
         int entityLikeStatus = likeService.findEntityLikeStatus(user.getId(), entityType, entityId);
         Map<String, Object> map = new HashMap<>();

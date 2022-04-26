@@ -75,7 +75,7 @@
 				</h6>
 				<!-- 作者 -->
 				<div class="media pb-3 border-bottom">
-					<a href="profile.html">
+					<a th:href="@{|/user/profile/${user.id}|}">
 						<img th:src="${user.headerUrl}" class="align-self-start mr-4 rounded-circle user-header" alt="用户头像" >
 					</a>
 					<div class="media-body">
@@ -85,7 +85,8 @@
 							<ul class="d-inline float-right">
 								<li class="d-inline ml-2">
 									<!--帖子的点赞，entityType为1-->
-									<a href="javascript:;"  th:onclick="|like(this, 1, ${discussPost.id})|" class="text-primary">
+									<!--onclick方法在discussPost.js中-->
+									<a href="javascript:;"  th:onclick="|like(this, 1, ${discussPost.id}, ${discussPost.userId})|" class="text-primary">
 										<b th:text="${discussPostLikeStatus == 1 ? '已赞' : '赞'}">赞</b>&nbsp;
 										<i th:text="${discussPostLikeCount}">11</i>
 									</a>
@@ -124,7 +125,7 @@
 				<ul class="list-unstyled mt-4">
 					<!-- 回帖 -->
 					<li class="media pb-3 pt-3 mb-3 border-bottom" th:each="map:${commentsList}">
-						<a href="profile.html">
+						<a th:href="@{|/user/profile/${map.user.id}|}">
 							<img th:src="${map.user.headerUrl}" class="align-self-start mr-4 rounded-circle user-header" alt="用户头像" >
 						</a>
 						<div class="media-body">
@@ -143,7 +144,8 @@
 								<ul class="d-inline float-right">
 									<li class="d-inline ml-2">
 										<!--帖子评论的点赞，entityType为2-->
-										<a href="javascript:;"  th:onclick="|like(this, 2, ${map.comment.id})|" class="text-primary">
+										<!--onclick方法在discussPost.js中-->
+										<a href="javascript:;"  th:onclick="|like(this, 2, ${map.comment.id}, ${map.comment.userId})|" class="text-primary">
 											<b th:text="${map.commentLikeStatus == 1 ? '已赞' : '赞'}">赞</b>
 											(<i th:text="${map.commentLikeCount}">1</i>)
 										</a>
@@ -175,7 +177,8 @@
 										<ul class="d-inline float-right">
 											<li class="d-inline ml-2">
                                                 <!--帖子评论的评论的点赞，entityType为2-->
-												<a href="javascript:;"  th:onclick="|like(this, 2, ${comment2CommentMap.comment2Comment.id})|" class="text-primary">
+												<!--onclick方法在discussPost.js中-->
+												<a href="javascript:;"  th:onclick="|like(this, 2, ${comment2CommentMap.comment2Comment.id}, ${comment2CommentMap.comment2Comment.userId})|" class="text-primary">
 													<b th:text="${comment2CommentMap.comment2CommentLikeStatus == 1 ? '已赞' : '赞'}">赞</b>
 													(<i th:text="${comment2CommentMap.comment2CommentLikeCount}">1</i>)
 												</a>
