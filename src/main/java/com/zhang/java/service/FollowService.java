@@ -1,5 +1,8 @@
 package com.zhang.java.service;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * @Date 2022/4/26 21:03
  * @Author zsy
@@ -51,4 +54,25 @@ public interface FollowService {
      * @return
      */
     boolean isFollowed(int userId, int entityType, int entityId);
+
+
+    /**
+     * 查询用户关注的用户和关注时间
+     *
+     * @param userId
+     * @param offset
+     * @param limit
+     * @return map中封装该用户关注的用户followeeUser，关注的时间followTime
+     */
+    List<Map<String, Object>> findFolloweesWithFollowTime(int userId, int offset, int limit);
+
+    /**
+     * 查询用户的粉丝和粉丝关注该用户的时间
+     *
+     * @param userId
+     * @param offset
+     * @param limit
+     * @return map中封装该用户的粉丝followerUser，粉丝关注该用户的时间followTime
+     */
+    List<Map<String, Object>> findFollowersWithFollowTime(int userId, int offset, int limit);
 }

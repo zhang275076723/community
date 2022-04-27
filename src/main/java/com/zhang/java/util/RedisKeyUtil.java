@@ -36,7 +36,7 @@ public class RedisKeyUtil {
 
     /**
      * 某个用户关注的实体
-     * followee:userId:entityType -> zset(entityId, now)
+     * followee:userId:entityType -> zset(entityId, 关注的时间now)
      *
      * @param userId
      * @param entityType
@@ -48,7 +48,7 @@ public class RedisKeyUtil {
 
     /**
      * 某个实体拥有的粉丝
-     * follower:entityType:entityId -> zset(userId, now)
+     * follower:entityType:entityId -> zset(userId, 粉丝关注的时间now)
      *
      * @param entityType
      * @param entityId
