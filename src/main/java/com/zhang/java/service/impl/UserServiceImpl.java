@@ -68,6 +68,14 @@ public class UserServiceImpl implements UserService {
         return userMapper.selectUserByName(username);
     }
 
+    /**
+     * 登录成功，将登录凭证存储在redis中(不设置过期时间，通过登录凭证中的status判断当前凭证是否有效)
+     *
+     * @param username
+     * @param password
+     * @param expiredSeconds
+     * @return
+     */
     @Override
     public Map<String, Object> login(String username, String password, Integer expiredSeconds) {
         Map<String, Object> map = new HashMap<>();
@@ -240,7 +248,7 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * redis中取不到用户时，从数据库中查询用户，并将用户放入redis
+     * redis中取不到用户时，从数据库中查询用户，并将用户放入redis(1h过期)
      *
      * @param userId
      * @return

@@ -190,7 +190,7 @@ public class LoginController {
 
     /**
      * 获取验证码
-     * 使用redis存储验证码，将验证码的临时凭证存放在cookie中，用于登录验证时从cookie中获取
+     * 使用redis存储验证码，将验证码的临时凭证存放在cookie中，用于登录验证时从cookie中获取(60s过期)
      *
      * @param response
      */
