@@ -5,11 +5,14 @@ import com.zhang.java.annotation.LoginRequired;
 import com.zhang.java.domain.User;
 import com.zhang.java.service.UserService;
 import com.zhang.java.util.CommunityConstant;
+import com.zhang.java.util.CommunityUtil;
+import com.zhang.java.util.RedisKeyUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +26,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Date 2022/4/5 17:51
@@ -39,6 +43,9 @@ public class LoginController {
     @Autowired
     private Producer kaptchaProducer;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
+
     @Value("${server.servlet.context-path}")
     //项目路径名
     private String contextPath;
@@ -53,17 +60,36 @@ public class LoginController {
         return "/site/register";
     }
 
+    /**
+     * 用户登录
+     * 从cookie中获取验证码的临时凭证，通过验证码的临时凭证在redis中获取验证码
+     *
+     * @param model
+     * @param response
+     * @param user 登录用户
+     * @param verifyCode 登录时输入的验证码
+     * @param kaptchaOwner 验证码的临时凭证
+     * @param rememberMe 是否记住我
+     * @return
+     */
     @PostMapping("/login")
     public String login(Model model,
-                        HttpSession session,
                         HttpServletResponse response,
                         User user,
                         @RequestParam("verifyCode") String verifyCode,
+                        @CookieValue("kaptchaOwner") String kaptchaOwner,
                         boolean rememberMe) {
         //因为获取的是checkbox中的checked属性值，而不是checkbox中的value值，所以不能使用@RequestParam
 
+        String kaptcha = null;
+
+        //从redis中获取验证码
+        if (StringUtils.isNotBlank(kaptchaOwner)) {
+            String redisKey = RedisKeyUtil.getKaptchaKey(kaptchaOwner);
+            kaptcha = (String) redisTemplate.opsForValue().get(redisKey);
+        }
+
         // 检查验证码
-        String kaptcha = (String) session.getAttribute("kaptcha");
         if (StringUtils.isBlank(kaptcha) ||
                 StringUtils.isBlank(verifyCode) ||
                 !kaptcha.equalsIgnoreCase(verifyCode)) {
@@ -132,7 +158,15 @@ public class LoginController {
         return "/site/register";
     }
 
-    // http://localhost:8080/community/activation/101/code
+    /**
+     * 激活用户
+     * http://localhost:8080/community/activation/101/code
+     *
+     * @param model
+     * @param userId
+     * @param activationCode
+     * @return
+     */
     @GetMapping("/activation/{userId}/{activationCode}")
     public String activation(Model model,
                              @PathVariable("userId") int userId,
@@ -154,17 +188,31 @@ public class LoginController {
         return "/site/operate-result";
     }
 
+    /**
+     * 获取验证码
+     * 使用redis存储验证码，将验证码的临时凭证存放在cookie中，用于登录验证时从cookie中获取
+     *
+     * @param response
+     */
     @GetMapping(path = "/kaptcha")
-    public void getKaptcha(HttpServletResponse response, HttpSession session) {
+    public void getKaptcha(HttpServletResponse response) {
         // 生成验证码
         String text = kaptchaProducer.createText();
         // 生成图片
         BufferedImage image = kaptchaProducer.createImage(text);
 
-        // 将验证码存入session
-        session.setAttribute("kaptcha", text);
+        //随机生成验证码的临时凭证，存放在cookie中
+        String kaptchaOwner = CommunityUtil.generateUUID();
+        Cookie cookie = new Cookie("kaptchaOwner", kaptchaOwner);
+        cookie.setMaxAge(60);
+        cookie.setPath(contextPath);
+        response.addCookie(cookie);
 
-        // 将图片输出给浏览器
+        //将验证码存储Redis，并设置超时时间
+        String redisKey = RedisKeyUtil.getKaptchaKey(kaptchaOwner);
+        redisTemplate.opsForValue().set(redisKey, text, 60, TimeUnit.SECONDS);
+
+        // 将图片输出给浏览器，设置响应类型为图片类型
         response.setContentType("image/png");
         try {
             // 图片要用字节流

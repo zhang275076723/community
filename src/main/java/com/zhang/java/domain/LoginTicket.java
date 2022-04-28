@@ -16,11 +16,16 @@ import java.util.Date;
 @AllArgsConstructor
 public class LoginTicket {
     private Integer id;
+
+    //凭证用户id
     private Integer userId;
+
     //登录凭证，32位的十六进制数
     private String ticket;
+
     //凭证状态，0-有效，1-失效
     private Integer status;
+
     //凭证到期时间
     private Date expired;
 }

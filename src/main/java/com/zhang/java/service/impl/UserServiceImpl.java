@@ -1,5 +1,6 @@
 package com.zhang.java.service.impl;
 
+import com.sun.org.apache.regexp.internal.RE;
 import com.zhang.java.domain.LoginTicket;
 import com.zhang.java.domain.User;
 import com.zhang.java.mapper.LoginTicketMapper;
@@ -8,9 +9,11 @@ import com.zhang.java.service.UserService;
 import com.zhang.java.util.CommunityUtil;
 import com.zhang.java.util.MailClient;
 import com.zhang.java.util.CommunityConstant;
+import com.zhang.java.util.RedisKeyUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -19,6 +22,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Date 2022/4/3 20:28
@@ -30,8 +34,11 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserMapper userMapper;
 
+//    @Autowired
+//    private LoginTicketMapper loginTicketMapper;
+
     @Autowired
-    private LoginTicketMapper loginTicketMapper;
+    private RedisTemplate redisTemplate;
 
     @Autowired
     private MailClient mailClient;
@@ -49,7 +56,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findUserById(Integer id) {
-        return userMapper.selectUserById(id);
+        User user = getUserFromCache(id);
+        if (user == null) {
+            user = initUserFromCache(id);
+        }
+        return user;
     }
 
     @Override
@@ -98,7 +109,10 @@ public class UserServiceImpl implements UserService {
         loginTicket.setStatus(0);
         // 将expiredSeconds转化为long，避免乘上1000时溢出，expiredSeconds单位为s，所以转换为ms要乘上1000
         loginTicket.setExpired(new Date(System.currentTimeMillis() + (long) expiredSeconds * 1000));
-        loginTicketMapper.insertLoginTicket(loginTicket);
+//        loginTicketMapper.insertLoginTicket(loginTicket);
+        //redis保存用户登录凭证，redis会自动将loginTicket对象序列化为json格式的字符串
+        String loginTicketKey = RedisKeyUtil.getLoginTicketKey(loginTicket.getTicket());
+        redisTemplate.opsForValue().set(loginTicketKey, loginTicket);
 
         map.put("ticket", loginTicket.getTicket());
         return map;
@@ -106,7 +120,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void logout(String ticket) {
-        loginTicketMapper.updateLoginTicketStatus(ticket, 1);
+//        loginTicketMapper.updateLoginTicketStatus(ticket, 1);
+        //从redis中取用户登录凭证，并设置凭证状态为1，失效
+        String loginTicketKey = RedisKeyUtil.getLoginTicketKey(ticket);
+        LoginTicket loginTicket = (LoginTicket) redisTemplate.opsForValue().get(loginTicketKey);
+        loginTicket.setStatus(1);
+        redisTemplate.opsForValue().set(loginTicketKey, loginTicket);
     }
 
     @Override
@@ -175,6 +194,8 @@ public class UserServiceImpl implements UserService {
             return CommunityConstant.ACTIVATION_REPEAT;
         } else if (user.getActivationCode().equals(activationCode)) {
             userMapper.updateUserStatus(userId, 1);
+            //对用户进行修改，需要清除用户缓存
+            clearUserFromCache(userId);
             return CommunityConstant.ACTIVATION_SUCCESS;
         } else {
             return CommunityConstant.ACTIVATION_FAILURE;
@@ -183,19 +204,61 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public LoginTicket findLoginTicketByTicket(String ticket) {
-        return loginTicketMapper.selectLoginTicketByTicket(ticket);
+//        return loginTicketMapper.selectLoginTicketByTicket(ticket);
+        //从redis中取用户登录凭证
+        String loginTicketKey = RedisKeyUtil.getLoginTicketKey(ticket);
+        return (LoginTicket) redisTemplate.opsForValue().get(loginTicketKey);
     }
 
     @Override
     public Integer updateHeader(Integer id, String headerUrl) {
-        return userMapper.updateUserHeader(id, headerUrl);
+        Integer rows = userMapper.updateUserHeader(id, headerUrl);
+        //对用户进行修改，需要清除用户缓存
+        clearUserFromCache(id);
+        return rows;
     }
 
     @Override
     public Integer updatePassword(Integer id, String password) {
         User user = userMapper.selectUserById(id);
         password = CommunityUtil.encodeMD5(password + user.getSalt());
-        return userMapper.updateUserPassword(id, password);
+        Integer rows = userMapper.updateUserPassword(id, password);
+        //对用户进行修改，需要清除用户缓存
+        clearUserFromCache(id);
+        return rows;
     }
 
+    /**
+     * 优先从redis中取用户
+     *
+     * @param userId
+     * @return
+     */
+    private User getUserFromCache(int userId) {
+        String userKey = RedisKeyUtil.getUserKey(userId);
+        return (User) redisTemplate.opsForValue().get(userKey);
+    }
+
+    /**
+     * redis中取不到用户时，从数据库中查询用户，并将用户放入redis
+     *
+     * @param userId
+     * @return
+     */
+    private User initUserFromCache(int userId) {
+        User user = userMapper.selectUserById(userId);
+        String userKey = RedisKeyUtil.getUserKey(userId);
+        redisTemplate.opsForValue().set(userKey, user, 3600, TimeUnit.SECONDS);
+        return user;
+    }
+
+    /**
+     * 用户数据变更时清除redis缓存数据，保证用户和redis数据的一致性
+     *
+     * @param userId
+     */
+    private void clearUserFromCache(int userId) {
+        String userKey = RedisKeyUtil.getUserKey(userId);
+        redisTemplate.delete(userKey);
+    }
 }

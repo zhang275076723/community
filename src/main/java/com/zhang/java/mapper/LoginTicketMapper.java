@@ -6,9 +6,10 @@ import org.apache.ibatis.annotations.*;
 /**
  * @Date 2022/4/11 16:04
  * @Author zsy
- * @Description
+ * @Description 用户登录凭证，存储在数据库中，使用redis替代存储在redis中
  */
 @Mapper
+@Deprecated
 public interface LoginTicketMapper {
     int insertLoginTicket(LoginTicket loginTicket);
 
