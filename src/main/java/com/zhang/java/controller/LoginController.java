@@ -85,8 +85,8 @@ public class LoginController {
 
         //从redis中获取验证码
         if (StringUtils.isNotBlank(kaptchaOwner)) {
-            String redisKey = RedisKeyUtil.getKaptchaKey(kaptchaOwner);
-            kaptcha = (String) redisTemplate.opsForValue().get(redisKey);
+            String kaptchaKey = RedisKeyUtil.getKaptchaKey(kaptchaOwner);
+            kaptcha = (String) redisTemplate.opsForValue().get(kaptchaKey);
         }
 
         // 检查验证码
@@ -209,8 +209,8 @@ public class LoginController {
         response.addCookie(cookie);
 
         //将验证码存储Redis，并设置超时时间
-        String redisKey = RedisKeyUtil.getKaptchaKey(kaptchaOwner);
-        redisTemplate.opsForValue().set(redisKey, text, 60, TimeUnit.SECONDS);
+        String kaptchaKey = RedisKeyUtil.getKaptchaKey(kaptchaOwner);
+        redisTemplate.opsForValue().set(kaptchaKey, text, 60, TimeUnit.SECONDS);
 
         // 将图片输出给浏览器，设置响应类型为图片类型
         response.setContentType("image/png");

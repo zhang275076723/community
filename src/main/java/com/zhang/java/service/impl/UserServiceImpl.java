@@ -205,7 +205,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public LoginTicket findLoginTicketByTicket(String ticket) {
 //        return loginTicketMapper.selectLoginTicketByTicket(ticket);
-        //从redis中取用户登录凭证
+        //从redis中获取用户登录凭证
         String loginTicketKey = RedisKeyUtil.getLoginTicketKey(ticket);
         return (LoginTicket) redisTemplate.opsForValue().get(loginTicketKey);
     }
