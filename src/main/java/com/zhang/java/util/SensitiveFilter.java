@@ -31,7 +31,7 @@ public class SensitiveFilter {
 
 
     /**
-     * ioc容器实例化这个bean时，调用该方法
+     * ioc容器实例化当前bean时，执行该方法
      */
     @PostConstruct
     public void init() {
@@ -93,7 +93,7 @@ public class SensitiveFilter {
     }
 
     /**
-     * 过滤敏感词，并进行替换
+     * 过滤敏感词，并进行替换，敏感词中间有特殊符号也能够过滤
      *
      * @param text 要被过滤的文本
      * @return 过滤敏感词之后的文本
@@ -127,14 +127,14 @@ public class SensitiveFilter {
                 sb.append(text.charAt(left));
                 left++;
                 right = left;
-                //node重新指向根节点
+                //node重新指向根节点，进行下次敏感词判断
                 node = root;
             } else if (node.getSensitiveWordEnd()) {
                 // c是敏感词，并且是敏感词末尾
                 sb.append(REPLACEMENT_WORDS);
                 left = right + 1;
                 right = left;
-                //node重新指向根节点
+                //node重新指向根节点，进行下次敏感词判断
                 node = root;
             } else {
                 //c是敏感词，并且不是敏感词末尾

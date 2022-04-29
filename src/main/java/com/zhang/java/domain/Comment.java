@@ -10,6 +10,9 @@ import java.util.Date;
  * @Date 2022/4/16 16:25
  * @Author zsy
  * @Description 评论，包括帖子评论和帖子评论的评论
+ * 帖子评论的评论包括：
+ * 1、帖子评论进行评论，只需要评论用户id，不需要回复用户id；
+ * 2、帖子评论进行回复，需要评论用户的ud和回复用户的id
  */
 @Data
 @AllArgsConstructor

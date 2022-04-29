@@ -28,6 +28,9 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 @SpringBootTest
 //使用指定类作为配置类
@@ -198,5 +201,44 @@ class CommunityApplicationTests implements ApplicationContextAware {
         });
         System.out.println(result);
         System.out.println("------------------------------------------------------------");
+    }
+
+    @Test
+    public void testBlockingQueue() {
+        //阻塞队列，大小为3
+        BlockingQueue<Integer> queue = new ArrayBlockingQueue<>(3);
+
+        //生产者
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //生产10个数据
+                for (int i = 1; i <= 10; i++) {
+                    try {
+                        int data = new Random().nextInt(10);
+                        System.out.println(Thread.currentThread().getName() + "第" + i + "生产数据：" + data);
+                        queue.put(data);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }, "producer").start();
+
+        //消费者
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //消费10个数据
+                for (int i = 1; i <= 10; i++) {
+                    try {
+                        Integer data = queue.take();
+                        System.out.println(Thread.currentThread().getName() + "第" + i + "消费数据：" + data);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }, "consumer").start();
     }
 }

@@ -18,7 +18,7 @@ public class Message {
     private int id;
     private int fromId;
     private int toId;
-    //私信双方，111-112
+    //私信双方id，冗余字段，格式：111-112
     private String conversationId;
     private String content;
     //接收方的私信状态，0-未读，1-已读，2-删除
