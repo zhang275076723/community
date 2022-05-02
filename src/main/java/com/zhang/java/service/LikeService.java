@@ -7,8 +7,8 @@ package com.zhang.java.service;
  */
 public interface LikeService {
     /**
-     * 用户对帖子或帖子评论或帖子评论的评论点赞或取消点赞
-     * 保证帖子实体或帖子评论实体或帖子评论的评论实体和用户实体赞所对应
+     * 用户对帖子、帖子评论、帖子评论的评论点赞或取消点赞
+     * 保证帖子实体或帖子评论实体或帖子评论的评论实体和用户实体赞所对应，保持一致性
      *
      * @param userId       当前登录的用户
      * @param entityType   实体类型

@@ -17,7 +17,7 @@ import java.util.Date;
 /**
  * @Date 2022/4/22 17:12
  * @Author zsy
- * @Description 业务逻辑切面类
+ * @Description service业务逻辑切面类
  */
 @Aspect
 @Component
@@ -28,10 +28,20 @@ public class ServiceLogAspect {
     public void pointcut() {
     }
 
+    /**
+     * 用户[1.2.3.4],在[xxx],访问了[com.zhang.java.community.impl.xxxService.xxx()].
+     *
+     * @param joinPoint
+     */
     @Before("pointcut()")
     public void before(JoinPoint joinPoint) {
-        // 用户[1.2.3.4],在[xxx],访问了[com.zhang.java.community.impl.xxxService.xxx()].
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+
+        //在事件消费者中调用了messageService，所以获取不到attributes
+        if (attributes == null) {
+            return;
+        }
+
         HttpServletRequest request = attributes.getRequest();
         String ip = request.getRemoteHost();
         String now = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());

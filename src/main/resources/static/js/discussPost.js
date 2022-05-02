@@ -1,8 +1,9 @@
-function like(btn, entityType, entityId, entityUserId) {
+function like(btn, entityType, entityId, entityUserId, discussPostId) {
     $.ajax({
         url: CONTEXT_PATH + "/like",
         method: "post",
-        data: {"entityType": entityType, "entityId": entityId, "entityUserId": entityUserId},
+        data: {"entityType": entityType, "entityId": entityId,
+            "entityUserId": entityUserId, "discussPostId": discussPostId},
 
         //data为服务器返回的数据
         success: function (data) {

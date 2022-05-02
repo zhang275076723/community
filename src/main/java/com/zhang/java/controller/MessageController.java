@@ -32,7 +32,13 @@ public class MessageController {
     @Autowired
     private HostHolder hostHolder;
 
-    //查询私信列表
+    /**
+     * 查询私信列表
+     *
+     * @param pageNum
+     * @param model
+     * @return
+     */
     @GetMapping("/list")
     public String getConversationList(@RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                       Model model) {
@@ -71,7 +77,14 @@ public class MessageController {
         return "/site/letter";
     }
 
-    //点击私信列表，查询私信列表中的全部私信详情
+    /**
+     * 点击私信列表，查询私信列表中的全部私信详情，并将私信设置为已读
+     *
+     * @param pageNum
+     * @param conversationId
+     * @param model
+     * @return
+     */
     @GetMapping("/letter/list/{conversationId}")
     public String getLetterList(@RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                 @PathVariable("conversationId") String conversationId, Model model) {
@@ -118,6 +131,13 @@ public class MessageController {
         return "/site/letter-detail";
     }
 
+    /**
+     * 发送私信
+     *
+     * @param toName
+     * @param content
+     * @return
+     */
     @PostMapping("/send")
     @ResponseBody
     public String sendMessage(@RequestParam("toName") String toName,

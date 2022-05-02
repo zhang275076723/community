@@ -2,8 +2,10 @@ package com.zhang.java.controller;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.zhang.java.domain.Event;
 import com.zhang.java.domain.Page;
 import com.zhang.java.domain.User;
+import com.zhang.java.event.EventProducer;
 import com.zhang.java.service.FollowService;
 import com.zhang.java.service.UserService;
 import com.zhang.java.util.CommunityConstant;
@@ -33,6 +35,9 @@ public class FollowController {
     @Autowired
     private HostHolder hostHolder;
 
+    @Autowired
+    private EventProducer eventProducer;
+
     /**
      * 关注某个实体
      *
@@ -46,6 +51,18 @@ public class FollowController {
                          @RequestParam("entityId") int entityId) {
         User user = hostHolder.getUser();
         followService.follow(user.getId(), entityType, entityId);
+
+        //关注事件，需要在命令行手动启动kafka、zookeeper
+        Event event = new Event();
+        event.setTopic(CommunityConstant.TOPIC_FOLLOW);
+        event.setUserId(user.getId());
+        event.setEntityType(entityType);
+        event.setEntityId(entityId);
+        //因为关注事件，点击可以跳转到对应用户，所以需要实体用户id
+        event.setEntityUserId(entityId);
+        //触发关注事件
+        eventProducer.fireEvent(event);
+
         return CommunityUtil.getJSONString(0, "已关注！", null);
     }
 

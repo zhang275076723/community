@@ -16,7 +16,7 @@ public class RedisKeyUtil {
     private static final String PREFIX_USER = "user";
 
     /**
-     * 某个实体的赞
+     * 某个实体的赞，包括帖子实体、帖子的评论实体、用户实体
      * like:entity:entityType:entityId -> set类型(userId)
      *
      * @return
@@ -25,9 +25,8 @@ public class RedisKeyUtil {
         return PREFIX_ENTITY_LIKE + SPLIT + entityType + SPLIT + entityId;
     }
 
-
     /**
-     * 某个用户的赞
+     * 某个用户的赞，包括用户帖子的赞、用户评论的赞
      * like:user:userId -> string类型(用户点赞数量)
      *
      * @param userId

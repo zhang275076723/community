@@ -43,6 +43,12 @@ public class DiscussPostController {
     @Autowired
     private HostHolder hostHolder;
 
+    /**
+     * 发布帖子
+     *
+     * @param discussPost
+     * @return
+     */
     @PostMapping("/add")
     @ResponseBody
     @LoginRequired
@@ -67,6 +73,14 @@ public class DiscussPostController {
         return CommunityUtil.getJSONString(0, "发布成功！", null);
     }
 
+    /**
+     * 帖子详情界面
+     *
+     * @param discussPostId
+     * @param pageNum
+     * @param model
+     * @return
+     */
     @GetMapping("/detail/{discussPostId}")
     public String getDiscussPost(@PathVariable("discussPostId") Integer discussPostId,
                                  @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,

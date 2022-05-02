@@ -86,7 +86,7 @@
 								<li class="d-inline ml-2">
 									<!--帖子的点赞，entityType为1-->
 									<!--onclick方法在discussPost.js中-->
-									<a href="javascript:;"  th:onclick="|like(this, 1, ${discussPost.id}, ${discussPost.userId})|" class="text-primary">
+									<a href="javascript:;"  th:onclick="|like(this, 1, ${discussPost.id}, ${discussPost.userId}, ${discussPost.id})|" class="text-primary">
 										<b th:text="${discussPostLikeStatus == 1 ? '已赞' : '赞'}">赞</b>&nbsp;
 										<i th:text="${discussPostLikeCount}">11</i>
 									</a>
@@ -145,7 +145,7 @@
 									<li class="d-inline ml-2">
 										<!--帖子评论的点赞，entityType为2-->
 										<!--onclick方法在discussPost.js中-->
-										<a href="javascript:;"  th:onclick="|like(this, 2, ${map.comment.id}, ${map.comment.userId})|" class="text-primary">
+										<a href="javascript:;"  th:onclick="|like(this, 2, ${map.comment.id}, ${map.comment.userId}, ${discussPost.id})|" class="text-primary">
 											<b th:text="${map.commentLikeStatus == 1 ? '已赞' : '赞'}">赞</b>
 											(<i th:text="${map.commentLikeCount}">1</i>)
 										</a>
@@ -178,7 +178,7 @@
 											<li class="d-inline ml-2">
                                                 <!--帖子评论的评论的点赞，entityType为2-->
 												<!--onclick方法在discussPost.js中-->
-												<a href="javascript:;"  th:onclick="|like(this, 2, ${comment2CommentMap.comment2Comment.id}, ${comment2CommentMap.comment2Comment.userId})|" class="text-primary">
+												<a href="javascript:;"  th:onclick="|like(this, 2, ${comment2CommentMap.comment2Comment.id}, ${comment2CommentMap.comment2Comment.userId}, ${discussPost.id})|" class="text-primary">
 													<b th:text="${comment2CommentMap.comment2CommentLikeStatus == 1 ? '已赞' : '赞'}">赞</b>
 													(<i th:text="${comment2CommentMap.comment2CommentLikeCount}">1</i>)
 												</a>

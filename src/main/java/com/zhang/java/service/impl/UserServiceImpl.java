@@ -1,6 +1,5 @@
 package com.zhang.java.service.impl;
 
-import com.sun.org.apache.regexp.internal.RE;
 import com.zhang.java.domain.LoginTicket;
 import com.zhang.java.domain.User;
 import com.zhang.java.mapper.LoginTicketMapper;
