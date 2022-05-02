@@ -39,6 +39,9 @@ public class CommentController {
 
     /**
      * 添加帖子评论
+     * 包括：
+     * 1、帖子的评论
+     * 2、帖子评论的评论
      *
      * @param discussPostId
      * @param comment
@@ -64,13 +67,13 @@ public class CommentController {
             DiscussPost targetDiscussPost = discussPostService.findDiscussPostById(comment.getEntityId());
             event.setEntityUserId(targetDiscussPost.getUserId());
         } else if (comment.getEntityType() == CommunityConstant.ENTITY_TYPE_COMMENT) {
-            //当前评论是帖子的评论
+            //当前评论是帖子评论的评论
             Comment targetComment = commentService.findCommentById(comment.getEntityId());
             event.setEntityUserId(targetComment.getUserId());
         }
         //触发评论事件
         eventProducer.fireEvent(event);
 
-        return "redirect:/discusspost/detail/" + discussPostId;
+        return "redirect:/discussPost/detail/" + discussPostId;
     }
 }

@@ -12,7 +12,7 @@ function publish() {
     var content = $("#message-text").val();
 
     $.ajax({
-        url: CONTEXT_PATH + "/discusspost/add",
+        url: CONTEXT_PATH + "/discussPost/add",
         method: "post",
         contentType: "application/json;charset=utf-8",//发送给服务器的数据类型
         data: JSON.stringify({"title": title, "content": content}),//发送的数据为json字符串，方法参数使用@RequestBody接收，还要设置contentType
@@ -39,7 +39,7 @@ function publish() {
     });
 
     // $.post(
-    //     CONTEXT_PATH + "/discusspost/add",
+    //     CONTEXT_PATH + "/discussPost/add",
     //     {"title":title,"content":content},
     //     function(data) {
     //         data = $.parseJSON(data);

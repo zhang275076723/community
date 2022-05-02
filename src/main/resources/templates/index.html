@@ -27,7 +27,10 @@
 								<a class="nav-link" th:href="@{/index}">首页</a>
 							</li>
 							<li class="nav-item ml-3 btn-group-vertical" th:if="${loginUser != null}">
-								<a class="nav-link position-relative" th:href="@{/message/list}">消息<span class="badge badge-danger">12</span></a>
+								<a class="nav-link position-relative" th:href="@{/letter/list}">
+									消息<span class="badge badge-danger"
+											th:text="${totalUnreadCount != 0 ? totalUnreadCount : ''}">12</span>
+								</a>
 							</li>
 							<li class="nav-item ml-3 btn-group-vertical" th:if="${loginUser == null}">
 								<a class="nav-link" th:href="@{/register}">注册</a>
@@ -129,7 +132,7 @@
 						</a>
 						<div class="media-body">
 							<h6 class="mt-0 mb-3">
-								<a th:href="@{|/discusspost/detail/${map.discussPost.id}|}" th:utext="${map.discussPost.title}">备战春招，面试刷题跟他复习，一个月全搞定！</a>
+								<a th:href="@{|/discussPost/detail/${map.discussPost.id}|}" th:utext="${map.discussPost.title}">备战春招，面试刷题跟他复习，一个月全搞定！</a>
 								<span class="badge badge-secondary bg-primary" th:if="${map.discussPost.type == 1}">置顶</span>
 								<span class="badge badge-secondary bg-danger" th:if="${map.discussPost.status == 1}">精华</span>
 							</h6>

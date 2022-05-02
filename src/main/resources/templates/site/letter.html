@@ -66,13 +66,15 @@
 					<!-- 选项 -->
 					<ul class="nav nav-tabs mb-3">
 						<li class="nav-item">
-							<a class="nav-link position-relative active" th:href="@{/message/list}">
-								朋友私信<span class="badge badge-danger" th:text="${userUnreadCount}" th:if="${userUnreadCount != 0}">3</span>
+							<a class="nav-link position-relative active" th:href="@{/letter/list}">
+								朋友私信<span class="badge badge-danger" th:text="${letterUnreadCount}"
+										  th:if="${letterUnreadCount != 0}">3</span>
 							</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link position-relative" href="notice.html">
-								系统通知<span class="badge badge-danger">27</span>
+							<a class="nav-link position-relative" th:href="@{/notice/list}">
+								系统通知<span class="badge badge-danger" th:text="${noticeUnreadCount}"
+										  th:if="${noticeUnreadCount != 0}">27</span>
 							</a>
 						</li>
 					</ul>
@@ -129,7 +131,7 @@
 				<ul class="list-unstyled">
 					<li class="media pb-3 pt-3 mb-3 border-bottom position-relative" th:each="map:${conversionList}">
 						<span class="badge badge-danger" th:text="${map.unreadCount}" th:if="${map.unreadCount != 0}">3</span>
-						<a href="profile.html">
+						<a th:href="@{|/user/profile/${map.targetUser.id}|}">
 							<img th:src="${map.targetUser.headerUrl}" class="mr-4 rounded-circle user-header" alt="用户头像" >
 						</a>
 						<div class="media-body">
@@ -140,7 +142,7 @@
 								</span>
 							</h6>
 							<div>
-								<a th:href="@{|/message/letter/list/${map.message.conversationId}|}" th:utext="${map.message.content}">米粉车, 你来吧!</a>
+								<a th:href="@{|/letter/detail/${map.message.conversationId}|}" th:utext="${map.message.content}">米粉车, 你来吧!</a>
 								<ul class="d-inline font-size-12 float-right">
 									<li class="d-inline ml-2"><a href="#" class="text-primary">
 										共<i th:text="${map.letterCount}">5</i>条会话</a>
@@ -155,19 +157,19 @@
 				<nav class="mt-5" th:if="${pageInfo.pages > 0}">
 					<ul class="pagination justify-content-center">
 						<li th:class="|page-item ${pageInfo.hasPreviousPage ? '' : 'disabled'}|">
-							<a class="page-link" th:href="@{/message/list?pageNum=1}">首页</a>
+							<a class="page-link" th:href="@{/letter/list?pageNum=1}">首页</a>
 						</li>
 						<li th:class="|page-item ${pageInfo.hasPreviousPage ? '' : 'disabled'}|">
-							<a class="page-link" th:href="@{/message/list(pageNum=${pageInfo.pageNum - 1})}">上一页</a>
+							<a class="page-link" th:href="@{/letter/list(pageNum=${pageInfo.pageNum - 1})}">上一页</a>
 						</li>
 						<li th:class="|page-item ${pn == pageInfo.pageNum ? 'active' : ''}|" th:each="pn:${pageInfo.navigatepageNums}">
-							<a class="page-link" th:href="@{'/message/list?pageNum=' + ${pn}}" th:text="${pn}">1</a>
+							<a class="page-link" th:href="@{'/letter/list?pageNum=' + ${pn}}" th:text="${pn}">1</a>
 						</li>
 						<li th:class="|page-item ${pageInfo.hasNextPage ? '' : 'disabled'}|">
-							<a class="page-link" th:href="@{/message/list(pageNum=${pageInfo.pageNum + 1})}">下一页</a>
+							<a class="page-link" th:href="@{/letter/list(pageNum=${pageInfo.pageNum + 1})}">下一页</a>
 						</li>
 						<li th:class="|page-item ${pageInfo.hasNextPage ? '' : 'disabled'}|">
-							<a class="page-link" th:href="@{/message/list(pageNum=${pageInfo.pages})}">末页</a>
+							<a class="page-link" th:href="@{/letter/list(pageNum=${pageInfo.pages})}">末页</a>
 						</li>
 					</ul>
 				</nav>

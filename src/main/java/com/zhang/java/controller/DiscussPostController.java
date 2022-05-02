@@ -26,7 +26,7 @@ import java.util.*;
  * @Description
  */
 @Controller
-@RequestMapping("/discusspost")
+@RequestMapping("/discussPost")
 public class DiscussPostController {
     @Autowired
     private UserService userService;

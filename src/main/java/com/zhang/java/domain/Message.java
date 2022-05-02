@@ -9,7 +9,11 @@ import java.util.Date;
 /**
  * @Date 2022/4/17 16:40
  * @Author zsy
- * @Description 消息，包括消息列表和消息列表中的每一条消息
+ * @Description 朋友私信和系统通知
+ * 包括：
+ * 1、私信列表
+ * 2、私信列表中的每一条私信
+ * 3、系统在评论、点赞、关注时发送的通知
  */
 @Data
 @AllArgsConstructor
@@ -21,7 +25,7 @@ public class Message {
     private int id;
 
     /**
-     * 发送方id，id为1表示系统消息
+     * 发送方id，id为1表示系统通知
      */
     private int fromId;
 
@@ -32,13 +36,13 @@ public class Message {
 
     /**
      * 消息双方id，冗余字段，格式：111-112
-     * 如果fromId为1，则为系统消息，存放主题类型：评论、点赞、关注
+     * 如果fromId为1，则为系统通知，存放主题类型：评论、点赞、关注
      */
     private String conversationId;
 
     /**
      * 消息内容
-     * 如果fromId为1，则存放json格式的系统消息
+     * 如果fromId为1，则存放json格式的系统通知
      */
     private String content;
 

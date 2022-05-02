@@ -13,7 +13,7 @@ function send_letter() {
     var content = $("#message-text").val();
 
     $.ajax({
-        url: CONTEXT_PATH + "/message/send",
+        url: CONTEXT_PATH + "/letter/send",
         method: "post",
         data: {"toName": toName, "content": content},//发送的数据为js对象，方法参数使用@RequestParam接收
         // data: JSON.stringify({"toName": toName, "content": content}),//发送的数据为json字符串，方法参数使用@RequestBody接收，还要设置contentType

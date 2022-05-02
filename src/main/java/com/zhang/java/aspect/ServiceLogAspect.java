@@ -37,15 +37,17 @@ public class ServiceLogAspect {
     public void before(JoinPoint joinPoint) {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 
-        //在事件消费者中调用了messageService，所以获取不到attributes
+        //在事件消费者中调用了messageService，所以获取不到attributes，直接返回
         if (attributes == null) {
             return;
         }
 
         HttpServletRequest request = attributes.getRequest();
+        //如果使用localhots，则会显示ipv6地址：0:0:0:0:0:0:0:1；使用127.0.0.1，则会显示ipv4地址：127.0.0.1
         String ip = request.getRemoteHost();
         String now = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-        //joinPoint.getSignature().getDeclaringTypeName()：包名 joinPoint.getSignature().getName()：方法名
+        //joinPoint.getSignature().getDeclaringTypeName()：包名
+        //joinPoint.getSignature().getName()：方法名
         String target = joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName();
         logger.info(String.format("用户[%s],在[%s],访问了[%s].", ip, now, target));
     }

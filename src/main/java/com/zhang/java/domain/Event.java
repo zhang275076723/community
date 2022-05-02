@@ -44,9 +44,5 @@ public class Event {
 
     public void setData(String key, Object value) {
         data.put(key, value);
-
-        {&quot;discussPostId&quot;:281,&quot;entityType&quot;:2,&quot;entityId&quot;:237,&quot;userId&quot;:115}
-        {&quot;discussPostId&quot;:281,&quot;entityType&quot;:2,&quot;entityId&quot;:237,&quot;userId&quot;:115}
-        {&quot;discussPostId&quot;:281,&quot;entityType&quot;:2,&quot;entityId&quot;:237,&quot;userId&quot;:115}
     }
 }

@@ -19,8 +19,6 @@ public interface MessageMapper {
      * 去除系统管理员的私信，去除已经删除的私信
      *
      * @param userId
-     * @param offset
-     * @param limit
      * @return
      */
     List<Message> selectConversations(@Param("userId") Integer userId);
@@ -50,8 +48,8 @@ public interface MessageMapper {
     Integer selectLetterCount(@Param("conversationId") String conversationId);
 
     /**
-     * 查询用户未读私信的数量，conversationId为null
-     * 查询用户某个私信列表未读私信的数量，conversationId不为null
+     * 1、查询用户未读私信的数量，conversationId为null
+     * 2、查询用户某个私信列表未读私信的数量，conversationId不为null
      *
      * @param userId
      * @param conversationId
@@ -78,4 +76,41 @@ public interface MessageMapper {
     Integer updateMessageStatus(@Param("ids") List<Integer> ids,
                                 @Param("status") Integer status);
 
+    /**
+     * 查询某个主题最新的系统通知，因为系统通知页面只显示最新的那条通知
+     *
+     * @param userId
+     * @param topic
+     * @return
+     */
+    Message selectLastestNotice(@Param("userId") int userId,
+                                @Param("topic") String topic);
+
+    /**
+     * 查询某个主题所包含的通知数量
+     *
+     * @param userId
+     * @param topic
+     * @return
+     */
+    int selectNoticeCount(int userId, String topic);
+
+    /**
+     * 1、查询某个主题未读的通知的数量，topic不为null
+     * 2、查询所有主题未读的通知的数量，topic为null
+     *
+     * @param userId
+     * @param topic
+     * @return
+     */
+    int selectNoticeUnreadCount(int userId, String topic);
+
+    /**
+     * 查询某个主题所包含的所有系统通知
+     *
+     * @param userId
+     * @param topic
+     * @return
+     */
+    List<Message> selectNotices(int userId, String topic);
 }
