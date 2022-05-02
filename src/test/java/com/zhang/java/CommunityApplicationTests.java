@@ -10,10 +10,12 @@ import com.zhang.java.service.DiscussPostService;
 import com.zhang.java.service.impl.TestService;
 import com.zhang.java.util.MailClient;
 import com.zhang.java.util.SensitiveFilter;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -23,6 +25,9 @@ import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SessionCallback;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Component;
 import org.springframework.test.context.ContextConfiguration;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -240,5 +245,47 @@ class CommunityApplicationTests implements ApplicationContextAware {
                 }
             }
         }, "consumer").start();
+    }
+
+    /**
+     * 需要在命令行手动启动kafka、zookeeper和消费者
+     * 1.开启zookeeper：D:\kafka_2.12-3.1.0>bin\windows\zookeeper-server-start.bat config\zookeeper.properties
+     * 2.开启kafka：D:\kafka_2.12-3.1.0>bin\windows\kafka-server-start.bat config\server.properties
+     * 3.创建topic：D:\kafka_2.12-3.1.0\bin\windows>kafka-topics.bat --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic test
+     * 4.生产者：D:\kafka_2.12-3.1.0\bin\windows>kafka-console-producer.bat --broker-list localhost:9092 --topic test
+     * 5.消费者：D:\kafka_2.12-3.1.0\bin\windows>kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic test --from-beginning
+     * 6.关闭kafka：D:\kafka_2.12-3.1.0\bin\windows>kafka-server-stop.bat
+     * 7.开启zookeeper：D:\kafka_2.12-3.1.0\bin\windows>zookeeper-server-stop.bat
+     */
+    @Test
+    public void kafkaTest() {
+        KafkaProducer kafkaProducer = applicationContext.getBean("kafkaProducer", KafkaProducer.class);
+
+        kafkaProducer.sendMessage("test", "hi");
+        kafkaProducer.sendMessage("test", "hello");
+
+        try {
+            Thread.sleep(1000 * 5);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+@Component
+class KafkaProducer {
+    @Autowired
+    private KafkaTemplate kafkaTemplate;
+
+    public void sendMessage(String topic, String content) {
+        kafkaTemplate.send(topic, content);
+    }
+}
+
+@Component
+class KafkaConsumer {
+    @KafkaListener(topics = {"test"})
+    public void handleMessage(ConsumerRecord record) {
+        System.out.println(record.value());
     }
 }
