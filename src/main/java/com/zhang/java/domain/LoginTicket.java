@@ -15,17 +15,30 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LoginTicket {
+    /**
+     * 凭证id
+     */
     private Integer id;
 
-    //凭证用户id
+    /**
+     * 凭证用户id
+     */
     private Integer userId;
 
-    //登录凭证，32位的十六进制数
+    /**
+     * 登录凭证，32位的十六进制数
+     */
     private String ticket;
 
-    //凭证状态，0-有效，1-失效
+    /**
+     * 凭证状态：
+     * 0-有效
+     * 1-失效
+     */
     private Integer status;
 
-    //凭证到期时间
+    /**
+     * 凭证到期时间
+     */
     private Date expired;
 }

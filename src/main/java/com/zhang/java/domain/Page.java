@@ -6,19 +6,29 @@ package com.zhang.java.domain;
  * @Description 自定义分页，redis不能使用PageHelper
  */
 public class Page {
-    //当前是第几页
+    /**
+     * 当前是第几页
+     */
     private int pageNum;
 
-    //每页大小
+    /**
+     * 每页大小
+     */
     private int pageSize;
 
-    //元素总数
+    /**
+     * 元素总数
+     */
     private int totalRows;
 
-    //总页数
+    /**
+     * 总页数
+     */
     private int totalPages;
 
-    //查询路径，用于分页复用
+    /**
+     * 查询路径，用于分页复用
+     */
     private String urlPath;
 
     public Page() {
