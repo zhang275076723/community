@@ -56,7 +56,7 @@ public class CommentServiceImpl implements CommentService {
         //添加评论
         Integer row = commentMapper.insertComment(comment);
 
-        //只有是对帖子的评论才更新帖子中评论数量
+        //只有是对帖子的评论才更新帖子的评论数量，对帖子中评论的评论不更新帖子的评论数量
         if (comment.getEntityType() == CommunityConstant.ENTITY_TYPE_DISCUSSPOST) {
             Integer commentCount = commentMapper.selectCommentsCountByEntity(comment.getEntityType(), comment.getEntityId());
             discussPostMapper.updateDiscussPostCommentCountById(comment.getEntityId(), commentCount);

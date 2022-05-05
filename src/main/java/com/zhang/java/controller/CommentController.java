@@ -3,6 +3,7 @@ package com.zhang.java.controller;
 import com.zhang.java.domain.Comment;
 import com.zhang.java.domain.DiscussPost;
 import com.zhang.java.domain.Event;
+import com.zhang.java.domain.User;
 import com.zhang.java.event.EventProducer;
 import com.zhang.java.service.CommentService;
 import com.zhang.java.service.DiscussPostService;
@@ -49,7 +50,9 @@ public class CommentController {
      */
     @PostMapping("/add/{discussPostId}")
     public String addComment(@PathVariable("discussPostId") Integer discussPostId, Comment comment) {
-        comment.setUserId(hostHolder.getUser().getId());
+        User user = hostHolder.getUser();
+
+        comment.setUserId(user.getId());
         comment.setStatus(0);
         comment.setCreateTime(new Date());
         commentService.addComment(comment);
@@ -57,7 +60,7 @@ public class CommentController {
         //评论事件，需要在命令行手动启动kafka、zookeeper
         Event event = new Event();
         event.setTopic(CommunityConstant.TOPIC_COMMENT);
-        event.setUserId(hostHolder.getUser().getId());
+        event.setUserId(user.getId());
         event.setEntityType(comment.getEntityType());
         event.setEntityId(comment.getEntityId());
         //因为评论事件，点击可以跳转到对应帖子，所以需要帖子的id
@@ -74,6 +77,17 @@ public class CommentController {
         //触发评论事件
         eventProducer.fireEvent(event);
 
+        //发帖事件，因为只有帖子的评论才会修改帖子的评论数量，所以只有当前评论是对帖子的评论才触发
+        if (comment.getEntityType() == CommunityConstant.ENTITY_TYPE_DISCUSSPOST) {
+            event = new Event();
+            event.setTopic(CommunityConstant.TOPIC_PUBLISH);
+            event.setUserId(user.getId());
+            event.setEntityType(CommunityConstant.ENTITY_TYPE_DISCUSSPOST);
+            event.setEntityId(discussPostId);
+            //触发发帖事件
+            eventProducer.fireEvent(event);
+        }
+        
         return "redirect:/discussPost/detail/" + discussPostId;
     }
 }

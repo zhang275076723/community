@@ -5,7 +5,9 @@ import com.github.pagehelper.PageInfo;
 import com.zhang.java.annotation.LoginRequired;
 import com.zhang.java.domain.Comment;
 import com.zhang.java.domain.DiscussPost;
+import com.zhang.java.domain.Event;
 import com.zhang.java.domain.User;
+import com.zhang.java.event.EventProducer;
 import com.zhang.java.service.CommentService;
 import com.zhang.java.service.DiscussPostService;
 import com.zhang.java.service.LikeService;
@@ -43,6 +45,9 @@ public class DiscussPostController {
     @Autowired
     private HostHolder hostHolder;
 
+    @Autowired
+    private EventProducer eventProducer;
+
     /**
      * 发布帖子
      *
@@ -68,6 +73,15 @@ public class DiscussPostController {
         post.setContent(discussPost.getContent());
 
         discussPostService.addDiscussPost(post);
+
+        //发帖事件，将帖子存放到es中，需要在命令行手动启动kafka、zookeeper
+        Event event = new Event();
+        event.setTopic(CommunityConstant.TOPIC_PUBLISH);
+        event.setUserId(user.getId());
+        event.setEntityType(CommunityConstant.ENTITY_TYPE_DISCUSSPOST);
+        event.setEntityId(post.getId());
+        //触发发帖事件
+        eventProducer.fireEvent(event);
 
         // 报错的情况,将来统一处理.
         return CommunityUtil.getJSONString(0, "发布成功！", null);

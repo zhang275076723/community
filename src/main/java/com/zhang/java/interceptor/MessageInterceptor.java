@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * @Date 2022/5/2 22:36
  * @Author zsy
- * @Description 统计朋友私信+系统通知的总数量，为消息的数量
+ * @Description 每次请求都要统计朋友私信+系统通知的总数量，显示为消息的数量
  */
 @Component
 public class MessageInterceptor implements HandlerInterceptor {

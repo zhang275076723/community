@@ -3,7 +3,7 @@ package com.zhang.java.domain;
 /**
  * @Date 2022/4/27 16:22
  * @Author zsy
- * @Description 自定义分页，redis不能使用PageHelper
+ * @Description 自定义分页，对于不是数据库的查询，例如redis、es，则不能使用PageHelper
  */
 public class Page {
     /**
@@ -39,7 +39,7 @@ public class Page {
     }
 
     public void setPageNum(int pageNum) {
-        if (pageNum < 1) {
+        if (pageNum <= 1) {
             this.pageNum = 1;
         } else if (pageNum > totalPages) {
             this.pageNum = totalPages;

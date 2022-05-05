@@ -39,13 +39,20 @@ public interface DiscussPostMapper {
 
 
     /**
-     * 根据id查询帖子
+     * 根据帖子id查询帖子
      *
      * @param id
      * @return
      */
     DiscussPost selectDiscussPostById(@Param("id") Integer id);
 
+    /**
+     * 根据帖子id修改评论数量
+     *
+     * @param id
+     * @param commentCount
+     * @return
+     */
     Integer updateDiscussPostCommentCountById(@Param("id") Integer id,
                                               @Param("commentCount") Integer commentCount);
 }

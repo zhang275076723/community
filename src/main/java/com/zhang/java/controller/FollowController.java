@@ -1,7 +1,5 @@
 package com.zhang.java.controller;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.zhang.java.domain.Event;
 import com.zhang.java.domain.Page;
 import com.zhang.java.domain.User;

@@ -1,8 +1,12 @@
 package com.zhang.java.event;
 
 import com.alibaba.fastjson.JSONObject;
+import com.zhang.java.domain.DiscussPost;
 import com.zhang.java.domain.Event;
 import com.zhang.java.domain.Message;
+import com.zhang.java.mapper.DiscussPostMapper;
+import com.zhang.java.service.DiscussPostService;
+import com.zhang.java.service.ElasticsearchService;
 import com.zhang.java.service.MessageService;
 import com.zhang.java.util.CommunityConstant;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -28,13 +32,22 @@ public class EventConsumer {
     @Autowired
     private MessageService messageService;
 
+    @Autowired
+    private DiscussPostService discussPostService;
+
+    @Autowired
+    private ElasticsearchService elasticsearchService;
+
     /**
-     * 接收消息，当评论、点赞、关注时接收消息，发送系统消息
+     * 消费评论、点赞、关注事件，发送系统消息
      *
      * @param record
      */
-    @KafkaListener(topics = {CommunityConstant.TOPIC_COMMENT,
-            CommunityConstant.TOPIC_LIKE, CommunityConstant.TOPIC_FOLLOW})
+    @KafkaListener(topics = {
+            CommunityConstant.TOPIC_COMMENT,
+            CommunityConstant.TOPIC_LIKE,
+            CommunityConstant.TOPIC_FOLLOW
+    })
     public void handleMessage(ConsumerRecord record) {
         if (record == null || record.value() == null) {
             logger.error("消息的内容为空！");
@@ -68,5 +81,27 @@ public class EventConsumer {
 
         //发送系统消息
         messageService.addMessage(message);
+    }
+
+    /**
+     * 消费发帖事件，将帖子存放到es中
+     *
+     * @param record
+     */
+    @KafkaListener(topics = CommunityConstant.TOPIC_PUBLISH)
+    public void handlePublishMessage(ConsumerRecord record) {
+        if (record == null || record.value() == null) {
+            logger.error("消息的内容为空！");
+            return;
+        }
+
+        Event event = JSONObject.parseObject(record.value().toString(), Event.class);
+        if (event == null) {
+            logger.error("消息格式错误！");
+            return;
+        }
+
+        DiscussPost discussPost = discussPostService.findDiscussPostById(event.getEntityId());
+        elasticsearchService.saveDiscussPost(discussPost);
     }
 }

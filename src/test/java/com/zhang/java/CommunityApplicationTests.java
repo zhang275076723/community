@@ -54,6 +54,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -280,6 +281,11 @@ class CommunityApplicationTests implements ApplicationContextAware {
      * 5.消费者：D:\kafka_2.12-3.1.0\bin\windows>kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic test --from-beginning
      * 6.关闭kafka：D:\kafka_2.12-3.1.0\bin\windows>kafka-server-stop.bat
      * 7.开启zookeeper：D:\kafka_2.12-3.1.0\bin\windows>zookeeper-server-stop.bat
+     * <p>
+     * 报错：Error while fetching metadata with correlation id
+     * 在server.properties中添加
+     * listeners=PLAINTEXT://localhost:9092
+     * advertised.listeners=PLAINTEXT://localhost:9092
      */
     @Test
     public void kafkaTest() {
@@ -289,6 +295,7 @@ class CommunityApplicationTests implements ApplicationContextAware {
         kafkaProducer.sendMessage("test", "hello");
 
         try {
+            //阻塞一段时间，等待消费者消费
             Thread.sleep(1000 * 5);
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -297,6 +304,7 @@ class CommunityApplicationTests implements ApplicationContextAware {
 
     /**
      * 需要启动es服务器，D:\elasticsearch-7.15.2\bin\elasticsearch.bat
+     * 使用es7，需要高版本jdk11，在环境变量中设置ES_JAVA_HOME
      */
     @Test
     public void elasticsearchTest() throws IOException {
@@ -374,6 +382,7 @@ class CommunityApplicationTests implements ApplicationContextAware {
 //        searchRequest.source(searchSourceBuilder);
 //        SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
 //        System.out.println(JSONObject.toJSON(searchResponse));
+//        //查询结果
 //        for (SearchHit hit : searchResponse.getHits().getHits()) {
 //            DiscussPost discussPost = JSONObject.parseObject(hit.getSourceAsString(), DiscussPost.class);
 //            System.out.println(discussPost);
@@ -402,6 +411,7 @@ class CommunityApplicationTests implements ApplicationContextAware {
                 .highlighter(highlightBuilder);
         searchRequest.source(searchSourceBuilder);
         SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
+        //查询结果
         for (SearchHit hit : searchResponse.getHits().getHits()) {
             DiscussPost discussPost = JSONObject.parseObject(hit.getSourceAsString(), DiscussPost.class);
             // 处理高亮显示的结果
