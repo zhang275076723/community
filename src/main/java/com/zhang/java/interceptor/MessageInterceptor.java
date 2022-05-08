@@ -27,7 +27,8 @@ public class MessageInterceptor implements HandlerInterceptor {
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         User user = hostHolder.getUser();
-        if (user != null) {
+        //当前用户已登录，且需要跳转到目标页面时，才进行查询用户未读的消息总数
+        if (user != null && modelAndView != null) {
             int letterUnreadCount = messageService.findLetterUnreadCount(user.getId(), null);
             int noticeUnreadCount = messageService.findNoticeUnreadCount(user.getId(), null);
             modelAndView.addObject("totalUnreadCount",

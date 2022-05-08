@@ -56,7 +56,8 @@ public class DiscussPostController {
      */
     @PostMapping("/add")
     @ResponseBody
-    @LoginRequired
+    //使用自定义注解实现请求拦截，使用spring security拦截
+//    @LoginRequired
     public String addDiscussPost(@RequestBody DiscussPost discussPost) {
         //ajax发送的是json数据，所以使用@RequestBody接收；如果发送js对象，使用@RequestParam接收
 

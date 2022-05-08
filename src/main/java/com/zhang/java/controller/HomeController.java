@@ -38,16 +38,43 @@ public class HomeController {
     @Autowired
     private LikeService likeService;
 
+    /**
+     * 系统主页
+     *
+     * @return
+     */
     @RequestMapping("/")
     public String homePage() {
         return "redirect:/index";
     }
 
+    /**
+     * 系统发生错误时的错误页面
+     *
+     * @return
+     */
     @GetMapping("/error")
     public String getErrorPage() {
         return "/error/500";
     }
 
+    /**
+     * 用户权限不足时的拒绝访问提示页面
+     *
+     * @return
+     */
+    @GetMapping("/denied")
+    public String getDeniedPage() {
+        return "/error/404";
+    }
+
+    /**
+     * 系统首页
+     *
+     * @param pageNum
+     * @param model
+     * @return
+     */
     @GetMapping("/index")
     public String getIndexPage(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
                                Model model) {

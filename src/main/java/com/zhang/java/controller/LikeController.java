@@ -43,7 +43,8 @@ public class LikeController {
      */
     @PostMapping("/like")
     @ResponseBody
-    @LoginRequired
+    //使用自定义注解实现请求拦截，使用spring security拦截
+//    @LoginRequired
     public String like(int entityType, int entityId, int entityUserId, int discussPostId) {
         User user = hostHolder.getUser();
         likeService.like(user.getId(), entityType, entityId, entityUserId);

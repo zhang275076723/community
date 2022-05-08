@@ -53,6 +53,7 @@ public class User {
     private String activationCode;
     /**
      * 用户头像url地址，0-1000t.png
+     * 也可以使用本地上传的头像url
      */
     private String headerUrl;
 

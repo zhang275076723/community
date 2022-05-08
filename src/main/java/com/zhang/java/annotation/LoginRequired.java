@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 /**
  * @Date 2022/4/13 17:24
  * @Author zsy
- * @Description 使用自定义注解拦截请求
+ * @Description 使用自定义注解拦截请求，使用spring security替代
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

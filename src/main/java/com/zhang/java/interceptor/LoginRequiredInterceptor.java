@@ -14,9 +14,10 @@ import java.lang.reflect.Method;
 /**
  * @Date 2022/4/13 17:24
  * @Author zsy
- * @Description 使用自定义注解实现登录拦截
+ * @Description 使用自定义注解实现登录拦截，使用spring security拦截
  */
 @Component
+@Deprecated
 public class LoginRequiredInterceptor implements HandlerInterceptor {
     @Autowired
     private HostHolder hostHolder;

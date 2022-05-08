@@ -56,15 +56,27 @@ public class UserController {
     //上传路径
     private String uploadPath;
 
-    //使用自定义注解实现请求拦截
-    @LoginRequired
+    /**
+     * 用户账号设置页面
+     *
+     * @return
+     */
+    //使用自定义注解实现请求拦截，使用spring security拦截
+//    @LoginRequired
     @GetMapping("/setting")
     public String getSettingPage() {
         return "/site/setting";
     }
 
-    //使用自定义注解实现请求拦截
-    @LoginRequired
+    /**
+     * 用户上传头像
+     *
+     * @param file
+     * @param model
+     * @return
+     */
+    //使用自定义注解实现请求拦截，使用spring security拦截
+//    @LoginRequired
     @PostMapping("/uploadHeaderImage")
     public String uploadHeaderImage(@RequestParam("headerImage") MultipartFile file, Model model) {
         if (file == null) {
@@ -107,7 +119,12 @@ public class UserController {
         return "redirect:/index";
     }
 
-    //根据headerUrl显示本地存放的头像
+    /**
+     * 根据headerUrl访问本地存放的用户头像
+     *
+     * @param filename
+     * @param response
+     */
     @GetMapping("/header/{headerUrl}")
     public void getHeaderImage(@PathVariable("headerUrl") String filename, HttpServletResponse response) {
         String suffix = filename.substring(filename.lastIndexOf('.'));
@@ -145,8 +162,17 @@ public class UserController {
         }
     }
 
-    //使用自定义注解实现请求拦截
-    @LoginRequired
+    /**
+     * 修改用户密码
+     *
+     * @param oldPassword
+     * @param newPassword
+     * @param confirmPassword
+     * @param model
+     * @return
+     */
+    //使用自定义注解实现请求拦截，使用spring security拦截
+//    @LoginRequired
     @GetMapping("/updatePassword")
     public String updatePassword(@RequestParam("oldPassword") String oldPassword,
                                  @RequestParam("newPassword") String newPassword,
@@ -170,6 +196,13 @@ public class UserController {
         return "redirect:/index";
     }
 
+    /**
+     * 用户个人主页
+     *
+     * @param userId
+     * @param model
+     * @return
+     */
     @GetMapping("/profile/{userId}")
     public String profile(@PathVariable("userId") int userId, Model model) {
         User user = userService.findUserById(userId);

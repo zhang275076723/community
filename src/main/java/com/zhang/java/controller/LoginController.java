@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -66,10 +67,10 @@ public class LoginController {
      *
      * @param model
      * @param response
-     * @param user 登录用户
-     * @param verifyCode 登录时输入的验证码
+     * @param user         登录用户
+     * @param verifyCode   登录时输入的验证码
      * @param kaptchaOwner 验证码的临时凭证
-     * @param rememberMe 是否记住我
+     * @param rememberMe   是否记住我
      * @return
      */
     @PostMapping("/login")
@@ -128,16 +129,31 @@ public class LoginController {
         }
     }
 
-    //使用自定义注解实现请求拦截
-    @LoginRequired
+    /**
+     * 登出
+     *
+     * @param ticket
+     * @return
+     */
+    //使用自定义注解实现请求拦截，使用spring security拦截
+//    @LoginRequired
     @GetMapping("/logout")
     public String logout(@CookieValue("ticket") String ticket) {
         userService.logout(ticket);
+        //清理SecurityContextHolder里面的用户认证结果
+        SecurityContextHolder.clearContext();
 
         //重定向到get请求的index
         return "redirect:/index";
     }
 
+    /**
+     * 注册
+     *
+     * @param model
+     * @param user
+     * @return
+     */
     @PostMapping("/register")
     public String register(Model model, User user) {
         Map<String, Object> map = userService.register(user);

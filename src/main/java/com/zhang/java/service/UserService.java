@@ -2,7 +2,9 @@ package com.zhang.java.service;
 
 import com.zhang.java.domain.LoginTicket;
 import com.zhang.java.domain.User;
+import org.springframework.security.core.GrantedAuthority;
 
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -28,5 +30,7 @@ public interface UserService {
     Integer updateHeader(Integer id, String headerUrl);
 
     Integer updatePassword(Integer id, String password);
+
+    Collection<? extends GrantedAuthority> getAuthorities(int userId);
 
 }
