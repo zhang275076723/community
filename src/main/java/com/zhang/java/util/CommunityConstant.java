@@ -62,12 +62,34 @@ public class CommunityConstant {
     public static final String TOPIC_FOLLOW = "follow";
 
     /**
-     * 主题，发帖
+     * 主题，发帖、置顶帖子、帖子加精
      */
     public static final String TOPIC_PUBLISH = "publish";
+
+    /**
+     * 主题，删帖
+     */
+    public static final String TOPIC_DELETE = "delete";
 
     /**
      * 系统用户id
      */
     public static final int SYSTEM_USER_ID = 1;
+
+    /**
+     * 权限: 普通用户
+     */
+    public static final String AUTHORITY_USER = "user";
+
+    /**
+     * 权限: 管理员
+     * 帖子删除
+     */
+    public static final String AUTHORITY_ADMIN = "admin";
+
+    /**
+     * 权限: 版主
+     * 帖子置顶、加精
+     */
+    public static final String AUTHORITY_MODERATOR = "moderator";
 }

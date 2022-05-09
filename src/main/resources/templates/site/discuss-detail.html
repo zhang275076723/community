@@ -1,5 +1,7 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+	<!--thymeleaf和spring-security权限相关的命名空间-->
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -68,12 +70,22 @@
 					<img src="http://static.nowcoder.com/images/img/icons/ico-discuss.png"/>
 					<span th:utext="${discussPost.title}">备战春招，面试刷题跟他复习，一个月全搞定！</span>
 					<div class="float-right">
-						<button type="button" class="btn btn-danger btn-sm">置顶</button>
-						<button type="button" class="btn btn-danger btn-sm">加精</button>
-						<button type="button" class="btn btn-danger btn-sm">删除</button>
+						<!--隐藏域，帖子id-->
+						<input type="hidden" id="discussPostId" th:value="${discussPost.id}">
+						<!--不显示指定type为button时，button按钮会自动提交表单刷新，导致ajax来不及执行
+							而需求是按钮onclick执行自定义方法，而不是表单提交-->
+						<input type="hidden" th:value="${discussPost.type}">
+						<button type="button" class="btn btn-danger btn-sm" id="topBtn"
+								th:text="${discussPost.type == 1 ? '已置顶' : '置顶'}"
+								sec:authorize="hasAnyAuthority('moderator')" >置顶</button>
+						<button type="button" class="btn btn-danger btn-sm" id="wonderfulBtn"
+								th:text="${discussPost.status == 1 ? '已加精' : '加精'}"
+								sec:authorize="hasAnyAuthority('moderator')">加精</button>
+						<button type="button" class="btn btn-danger btn-sm" id="deleteBtn"
+								sec:authorize="hasAnyAuthority('admin')">删除</button>
 					</div>
 				</h6>
-				<!-- 作者 -->
+				<!-- 作者信息 -->
 				<div class="media pb-3 border-bottom">
 					<a th:href="@{|/user/profile/${user.id}|}">
 						<img th:src="${user.headerUrl}" class="align-self-start mr-4 rounded-circle user-header" alt="用户头像" >
@@ -99,7 +111,7 @@
 						</div>
 					</div>
 				</div>
-				<!-- 正文 -->
+				<!-- 帖子内容 -->
 				<div class="mt-4 mb-3 content" th:utext="${discussPost.content}">
 					金三银四的金三已经到了，你还沉浸在过年的喜悦中吗？
 					如果是，那我要让你清醒一下了：目前大部分公司已经开启了内推，正式网申也将在3月份陆续开始，金三银四，春招的求职黄金时期已经来啦！！！
@@ -110,7 +122,7 @@
 				</div>
 			</div>
 
-			<!-- 回帖 -->
+			<!-- 帖子回帖 -->
 			<div class="container mt-3">
 				<!-- 回帖数量 -->
 				<div class="row">

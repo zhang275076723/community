@@ -3,6 +3,9 @@ $(function () {
     $(".close").click(delete_msg);
 });
 
+/**
+ * 发送朋友私信
+ */
 function send_letter() {
     //发送私信框隐藏
     $("#sendModal").modal("hide");

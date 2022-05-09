@@ -11,7 +11,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -55,6 +54,15 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                         CommunityConstant.AUTHORITY_ADMIN,
                         CommunityConstant.AUTHORITY_MODERATOR
                 )
+                .antMatchers(
+                        "/discussPost/top",
+                        "/discussPost/wonderful"
+                )
+                .hasAnyAuthority(CommunityConstant.AUTHORITY_MODERATOR)
+                .antMatchers(
+                        "/discussPost/delete"
+                )
+                .hasAnyAuthority(CommunityConstant.AUTHORITY_ADMIN)
                 //其他任意请求都允许访问
                 .anyRequest().permitAll()
                 //不启用防止csrf攻击，默认启用防止csrf攻击
@@ -75,7 +83,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                             //设置响应的内容类型
                             response.setContentType("application/plain;charset=utf-8");
                             PrintWriter writer = response.getWriter();
-                            writer.write(CommunityUtil.getJSONString(403, "你还没有登录哦!", null));
+                            writer.write(CommunityUtil.getJSONString(403, "您还没有登录哦!", null));
                         } else { //普通请求
                             response.sendRedirect(request.getContextPath() + "/login");
                         }
@@ -85,12 +93,14 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .accessDeniedHandler(new AccessDeniedHandler() {
                     @Override
                     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException e) throws IOException {
+                        //x-requested-with请求头：区分请求是ajax请求还是普通请求
                         String xRequestedWith = request.getHeader("x-requested-with");
+                        //ajax请求
                         if ("XMLHttpRequest".equals(xRequestedWith)) {
                             response.setContentType("application/plain;charset=utf-8");
                             PrintWriter writer = response.getWriter();
-                            writer.write(CommunityUtil.getJSONString(403, "你没有访问此功能的权限!", null));
-                        } else {
+                            writer.write(CommunityUtil.getJSONString(403, "您没有访问此功能的权限!", null));
+                        } else { //普通请求
                             response.sendRedirect(request.getContextPath() + "/denied");
                         }
                     }

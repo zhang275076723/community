@@ -64,7 +64,7 @@ public class DiscussPost {
      * 帖子状态：
      * 0-正常
      * 1-精华
-     * 2-拉黑
+     * 2-拉黑(删除)
      */
     @Field(type = FieldType.Integer)
     private Integer status;

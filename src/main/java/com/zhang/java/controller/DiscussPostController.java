@@ -15,6 +15,7 @@ import com.zhang.java.service.UserService;
 import com.zhang.java.util.CommunityConstant;
 import com.zhang.java.util.CommunityUtil;
 import com.zhang.java.util.HostHolder;
+import com.zhang.java.util.RedisKeyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -197,4 +198,82 @@ public class DiscussPostController {
         return "/site/discuss-detail";
     }
 
+    /**
+     * 置顶帖子和取消置顶帖子，即将帖子type设置为1或0
+     *
+     * @param discussPostId
+     * @return
+     */
+    @PostMapping("/top")
+    @ResponseBody
+    public String setTop(@RequestParam("discussPostId") int discussPostId) {
+        DiscussPost discussPost = discussPostService.findDiscussPostById(discussPostId);
+        int type = discussPost.getType() == 1 ? 0 : 1;
+        //置顶帖子或取消置顶帖子
+        discussPostService.updateType(discussPostId, type);
+
+        //置顶帖子和取消置顶帖子事件，将更新后的帖子存放到es中，需要在命令行手动启动kafka、zookeeper
+        Event event = new Event();
+        event.setTopic(CommunityConstant.TOPIC_PUBLISH);
+        event.setUserId(hostHolder.getUser().getId());
+        event.setEntityType(CommunityConstant.ENTITY_TYPE_DISCUSSPOST);
+        event.setEntityId(discussPostId);
+        //触发置顶帖子和取消置顶帖子事件
+        eventProducer.fireEvent(event);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("type", type);
+        return CommunityUtil.getJSONString(0, null, map);
+    }
+
+    /**
+     * 加精帖子和取消加精帖子，即将帖子status设置为1或0
+     *
+     * @param discussPostId
+     * @return
+     */
+    @PostMapping("/wonderful")
+    @ResponseBody
+    public String setWonderful(@RequestParam("discussPostId") int discussPostId) {
+        DiscussPost discussPost = discussPostService.findDiscussPostById(discussPostId);
+        int status = discussPost.getStatus() == 1 ? 0 : 1;
+        //加精帖子或取消加精帖子
+        discussPostService.updateStatus(discussPostId, status);
+
+        //加精帖子和取消加精帖子事件，将更新后的帖子存放到es中，需要在命令行手动启动kafka、zookeeper
+        Event event = new Event();
+        event.setTopic(CommunityConstant.TOPIC_PUBLISH);
+        event.setUserId(hostHolder.getUser().getId());
+        event.setEntityType(CommunityConstant.ENTITY_TYPE_DISCUSSPOST);
+        event.setEntityId(discussPostId);
+        //触发加精帖子和取消加精帖子事件
+        eventProducer.fireEvent(event);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("status", status);
+        return CommunityUtil.getJSONString(0, null, map);
+    }
+
+    /**
+     * 删除帖子，即将帖子status设置为2
+     *
+     * @param discussPostId
+     * @return
+     */
+    @PostMapping("/delete")
+    @ResponseBody
+    public String setDelete(@RequestParam("discussPostId") int discussPostId) {
+        discussPostService.updateStatus(discussPostId, 2);
+
+        //帖子删除事件，将该帖子从es中删除，需要在命令行手动启动kafka、zookeeper
+        Event event = new Event();
+        event.setTopic(CommunityConstant.TOPIC_DELETE);
+        event.setUserId(hostHolder.getUser().getId());
+        event.setEntityType(CommunityConstant.ENTITY_TYPE_DISCUSSPOST);
+        event.setEntityId(discussPostId);
+        //触发帖子删除
+        eventProducer.fireEvent(event);
+
+        return CommunityUtil.getJSONString(0, null, null);
+    }
 }

@@ -2,6 +2,9 @@ $(function () {
     $(".follow-btn").click(follow);
 });
 
+/**
+ * 关注用户、取关用户
+ */
 function follow() {
     var btn = this;
     if ($(btn).hasClass("btn-info")) {

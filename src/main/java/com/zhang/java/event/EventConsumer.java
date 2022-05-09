@@ -54,6 +54,7 @@ public class EventConsumer {
             return;
         }
 
+        //获取消息事件内容
         Event event = JSONObject.parseObject(record.value().toString(), Event.class);
         if (event == null) {
             logger.error("消息格式错误！");
@@ -84,7 +85,7 @@ public class EventConsumer {
     }
 
     /**
-     * 消费发帖事件，将帖子存放到es中
+     * 消费发帖、置顶帖子、帖子加精事件，将帖子存放到es中
      *
      * @param record
      */
@@ -95,6 +96,7 @@ public class EventConsumer {
             return;
         }
 
+        //获取消息事件内容
         Event event = JSONObject.parseObject(record.value().toString(), Event.class);
         if (event == null) {
             logger.error("消息格式错误！");
@@ -103,5 +105,27 @@ public class EventConsumer {
 
         DiscussPost discussPost = discussPostService.findDiscussPostById(event.getEntityId());
         elasticsearchService.saveDiscussPost(discussPost);
+    }
+
+    /**
+     * 消费删帖事件，将帖子从es中删除
+     *
+     * @param record
+     */
+    @KafkaListener(topics = CommunityConstant.TOPIC_DELETE)
+    public void handleDeleteMessage(ConsumerRecord record) {
+        if (record == null || record.value() == null) {
+            logger.error("消息的内容为空！");
+            return;
+        }
+
+        //获取消息事件内容
+        Event event = JSONObject.parseObject(record.value().toString(), Event.class);
+        if (event == null) {
+            logger.error("消息格式错误！");
+            return;
+        }
+
+        elasticsearchService.deleteDiscussPost(event.getEntityId());
     }
 }

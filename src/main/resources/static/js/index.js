@@ -2,6 +2,9 @@ $(function () {
     $("#publishBtn").click(publish);
 });
 
+/**
+ * 发帖
+ */
 function publish() {
     //添加帖子框隐藏
     $("#publishModal").modal("hide");
