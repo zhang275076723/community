@@ -43,7 +43,7 @@ public class ServiceLogAspect {
         }
 
         HttpServletRequest request = attributes.getRequest();
-        //如果使用localhots，则会显示ipv6地址：0:0:0:0:0:0:0:1；使用127.0.0.1，则会显示ipv4地址：127.0.0.1
+        //如果使用localhost，则会显示ipv6地址：0:0:0:0:0:0:0:1；使用127.0.0.1，则会显示ipv4地址：127.0.0.1
         String ip = request.getRemoteHost();
         String now = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         //joinPoint.getSignature().getDeclaringTypeName()：包名

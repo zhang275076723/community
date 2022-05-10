@@ -1,5 +1,6 @@
 package com.zhang.java.config;
 
+import com.zhang.java.interceptor.DataInterceptor;
 import com.zhang.java.interceptor.LoginRequiredInterceptor;
 import com.zhang.java.interceptor.LoginTicketInterceptor;
 import com.zhang.java.interceptor.MessageInterceptor;
@@ -24,6 +25,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Autowired
     private MessageInterceptor messageInterceptor;
 
+    @Autowired
+    private DataInterceptor dataInterceptor;
+
     /**
      * 拦截器配置
      *
@@ -39,6 +43,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
 //                excludePathPatterns("/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.jpeg");
 
         registry.addInterceptor(messageInterceptor).
+                excludePathPatterns("/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.jpeg");
+
+        registry.addInterceptor(dataInterceptor).
                 excludePathPatterns("/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.jpeg");
     }
 }

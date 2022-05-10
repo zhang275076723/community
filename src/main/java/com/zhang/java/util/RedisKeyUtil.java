@@ -7,13 +7,30 @@ package com.zhang.java.util;
  */
 public class RedisKeyUtil {
     private static final String SPLIT = ":";
+
     private static final String PREFIX_ENTITY_LIKE = "like:entity";
+
     private static final String PREFIX_USER_LIKE = "like:user";
+
     private static final String PREFIX_FOLLOWEE = "followee";
+
     private static final String PREFIX_FOLLOWER = "follower";
+
     private static final String PREFIX_KAPTCHA = "kaptcha";
+
     private static final String PREFIX_LOGIN_TICKET = "ticket";
+
     private static final String PREFIX_USER = "user";
+
+    /**
+     * 当天的独立访客(unique visitor)数量，通过ip统计，使用HyperLogLog存储
+     */
+    private static final String PREFIX_UV = "uv";
+
+    /**
+     * 日活跃用户(daily active user)数量，通过用户id统计，使用Bitmap存储
+     */
+    private static final String PREFIX_DAU = "dau";
 
     /**
      * 某个实体的赞，包括帖子实体、帖子的评论实体、用户实体
@@ -91,5 +108,55 @@ public class RedisKeyUtil {
      */
     public static String getUserKey(int userId) {
         return PREFIX_USER + SPLIT + userId;
+    }
+
+    /**
+     * 单日UV独立访客
+     * uv:date -> HyperLogLog类型(访问的ip)
+     * date格式：20220510
+     *
+     * @param date
+     * @return
+     */
+    public static String getUVKey(String date) {
+        return PREFIX_UV + SPLIT + date;
+    }
+
+    /**
+     * 区间UV，合并单日UV得到区间UV
+     * uv:startDate:endDate -> HyperLogLog类型(访问的ip)
+     * date格式：20220510
+     *
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    public static String getUVKey(String startDate, String endDate) {
+        return PREFIX_UV + SPLIT + startDate + SPLIT + endDate;
+    }
+
+    /**
+     * 单日活跃用户
+     * dau:date -> Bitmap类型(userId表示的值对应的索引位置设置为true)
+     * date格式：20220510
+     *
+     * @param date
+     * @return
+     */
+    public static String getDAUKey(String date) {
+        return PREFIX_DAU + SPLIT + date;
+    }
+
+    /**
+     * 区间活跃用户
+     * dau:startDate:endDate -> Bitmap类型(userId表示的值对应的索引位置设置为true)
+     * date格式：20220510
+     *
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    public static String getDAUKey(String startDate, String endDate) {
+        return PREFIX_DAU + SPLIT + startDate + SPLIT + endDate;
     }
 }

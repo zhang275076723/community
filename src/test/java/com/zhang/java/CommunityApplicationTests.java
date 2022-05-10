@@ -10,6 +10,7 @@ import com.zhang.java.mapper.DiscussPostMapper;
 import com.zhang.java.mapper.LoginTicketMapper;
 import com.zhang.java.mapper.MessageMapper;
 import com.zhang.java.mapper.UserMapper;
+import com.zhang.java.service.DataService;
 import com.zhang.java.service.DiscussPostService;
 import com.zhang.java.service.impl.TestService;
 import com.zhang.java.util.MailClient;
@@ -55,10 +56,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
@@ -337,6 +335,10 @@ class CommunityApplicationTests implements ApplicationContextAware {
         //true
         System.out.println(redisTemplate.opsForValue().getBit(redisKey, 6));
         System.out.println("------------------------------------------------------------");
+
+        DataService dataService = applicationContext.getBean("dataServiceImpl", DataService.class);
+        System.out.println(dataService.calculateUV(new Date(), new Date()));
+        System.out.println(dataService.calculateDAU(new Date(), new Date()));
     }
 
     @Test
