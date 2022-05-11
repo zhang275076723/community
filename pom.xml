@@ -123,10 +123,16 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
-        <!--thymeleaf中spring security相关的内容-->
+        <!--thymeleaf中spring security相关内容整合包-->
         <dependency>
             <groupId>org.thymeleaf.extras</groupId>
             <artifactId>thymeleaf-extras-springsecurity5</artifactId>
+        </dependency>
+
+        <!--quartz，分布式环境下能够启动定时任务的线程池-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-quartz</artifactId>
         </dependency>
 
     </dependencies>

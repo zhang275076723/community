@@ -5,7 +5,11 @@ import com.zhang.java.domain.User;
 import com.zhang.java.mapper.DiscussPostMapper;
 import com.zhang.java.mapper.UserMapper;
 import com.zhang.java.util.CommunityUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -20,6 +24,8 @@ import java.util.Date;
  */
 @Service
 public class TestService {
+    private static final Logger logger = LoggerFactory.getLogger(TestService.class);
+
     @Autowired
     private UserMapper userMapper;
 
@@ -57,6 +63,19 @@ public class TestService {
         Integer.valueOf("abc");
 
         return "ok";
+    }
+
+    //让该方法在多线程环境下，被异步的调用
+    @Async
+    public void execute1() {
+        logger.debug("execute1");
+    }
+
+    //initialDelay：第一次执行之前延迟的时间，默认单位毫秒
+    //fixedRate：任务连续执行之间的间隔，默认单位毫秒
+//    @Scheduled(initialDelay = 1000 * 5, fixedRate = 1000)
+    public void execute2() {
+        logger.debug("execute2");
     }
 
 }

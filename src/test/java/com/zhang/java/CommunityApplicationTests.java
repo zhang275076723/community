@@ -31,6 +31,9 @@ import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.junit.jupiter.api.Test;
+import org.quartz.JobKey;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -50,6 +53,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.ContextConfiguration;
 import org.thymeleaf.TemplateEngine;
@@ -57,8 +62,7 @@ import org.thymeleaf.context.Context;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.*;
 
 @SpringBootTest
 //使用指定类作为配置类
@@ -534,6 +538,96 @@ class CommunityApplicationTests implements ApplicationContextAware {
             System.out.println(discussPost);
         }
     }
+
+    @Test
+    public void threadPoolTest() throws InterruptedException {
+        Logger logger = LoggerFactory.getLogger(CommunityApplicationTests.class);
+
+        //JDK线程池
+//        ExecutorService executorService = Executors.newFixedThreadPool(5);
+//        Runnable task = new Runnable() {
+//            @Override
+//            public void run() {
+//                logger.debug("Hello ExecutorService");
+//            }
+//        };
+//        for (int i = 0; i < 10; i++) {
+//            executorService.submit(task);
+//        }
+//        //junit测试方法需要sleep，否则当前测试方法会直接执行结束
+//        Thread.sleep(1000 * 5);
+
+        //JDK可执行定时任务的线程池，分布式环境下有问题
+//        ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(5);
+//        Runnable task = new Runnable() {
+//            @Override
+//            public void run() {
+//                logger.debug("Hello ScheduledExecutorService");
+//            }
+//        };
+//        //initialDelay：第一次执行任务的延迟时间
+//        //Period：连续执行之间的时间间隔
+//        //unit：initialDelay和period参数的时间单位
+//        scheduledExecutorService.scheduleAtFixedRate(task,
+//                1000 * 10, 1000, TimeUnit.MILLISECONDS);
+//        //junit测试方法需要sleep，否则当前测试方法会直接执行结束
+//        Thread.sleep(1000 * 30);
+
+        //Spring普通线程池
+//        ThreadPoolTaskExecutor threadPoolTaskExecutor = applicationContext.getBean(ThreadPoolTaskExecutor.class);
+//        Runnable task = new Runnable() {
+//            @Override
+//            public void run() {
+//                logger.debug("Hello ThreadPoolTaskExecutor");
+//            }
+//        };
+//        for (int i = 0; i < 10; i++) {
+//            threadPoolTaskExecutor.submit(task);
+//        }
+//        //junit测试方法需要sleep，否则当前测试方法会直接执行结束
+//        Thread.sleep(1000 * 5);
+
+        //Spring能够启动定时任务的线程池，分布式环境下有问题
+//        ThreadPoolTaskScheduler threadPoolTaskScheduler = applicationContext.getBean(ThreadPoolTaskScheduler.class);
+//        Runnable task = new Runnable() {
+//            @Override
+//            public void run() {
+//                logger.debug("Hello ThreadPoolTaskScheduler");
+//            }
+//        };
+//        Date startTime = new Date(System.currentTimeMillis() + 1000 * 5);
+//        //startTime-期望任务的第一次执行时间(如果是在过去，任务将立即执行，即尽快)
+//        //period—任务连续执行之间的间隔(毫秒)
+//        threadPoolTaskScheduler.scheduleAtFixedRate(task, startTime, 1000);
+//        //junit测试方法需要sleep，否则当前测试方法会直接执行结束
+//        Thread.sleep(1000 * 10);
+
+        //Spring普通线程池(简化)
+//        TestService testService = applicationContext.getBean("testService", TestService.class);
+//        for (int i = 0; i < 10; i++) {
+//            testService.execute1();
+//        }
+//        //junit测试方法需要sleep，否则当前测试方法会直接执行结束
+//        Thread.sleep(1000 * 10);
+
+//        //Spring能够启动定时任务的线程池(简化)，分布式环境下有问题
+//        //TestService中的execute2()方法，@Scheduled只要有任务启动，该方法就会执行
+//        //junit测试方法需要sleep，否则当前测试方法会直接执行结束
+//        Thread.sleep(1000 * 10);
+    }
+
+    @Test
+    public void QuartzTest()   {
+        Scheduler scheduler = applicationContext.getBean(Scheduler.class);
+        try {
+            //删除该调度器的任务
+            boolean result = scheduler.deleteJob(new JobKey("testJob", "testJobGroup"));
+            System.out.println(result);
+        } catch (SchedulerException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
 
 @Component
