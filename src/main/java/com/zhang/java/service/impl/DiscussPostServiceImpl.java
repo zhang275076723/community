@@ -24,9 +24,15 @@ public class DiscussPostServiceImpl implements DiscussPostService {
     @Autowired
     private SensitiveFilter sensitiveFilter;
 
+    /**
+     *
+     * @param userId 用户id
+     * @param orderMode 排序模式，0-正常排序，1-按帖子分数由高到低排序
+     * @return
+     */
     @Override
-    public List<DiscussPost> findDiscussPosts(Integer userId) {
-        return discussPostMapper.selectDiscussPosts(userId);
+    public List<DiscussPost> findDiscussPosts(Integer userId, int orderMode) {
+        return discussPostMapper.selectDiscussPosts(userId, orderMode);
     }
 
     @Override
@@ -75,5 +81,10 @@ public class DiscussPostServiceImpl implements DiscussPostService {
     @Override
     public int updateStatus(int id, int status) {
         return discussPostMapper.updateStatus(id, status);
+    }
+
+    @Override
+    public int updateScore(int id, double score) {
+        return discussPostMapper.updateScore(id, score);
     }
 }

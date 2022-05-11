@@ -82,7 +82,9 @@ public class DiscussPost {
     private Integer commentCount;
 
     /**
-     * 帖子分数
+     * 帖子分数，用于热帖排行
+     * score = lg(精华分+帖子的评论数量*10+帖子的点赞数量*2) + (发布时间-社区纪元)
+     * 不包括帖子评论的评论数量、帖子评论的点赞数量
      */
     @Field(type = FieldType.Double)
     private Double score;

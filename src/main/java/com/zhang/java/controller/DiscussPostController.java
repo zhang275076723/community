@@ -17,6 +17,7 @@ import com.zhang.java.util.CommunityUtil;
 import com.zhang.java.util.HostHolder;
 import com.zhang.java.util.RedisKeyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -49,6 +50,9 @@ public class DiscussPostController {
     @Autowired
     private EventProducer eventProducer;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
+
     /**
      * 发布帖子
      *
@@ -73,7 +77,6 @@ public class DiscussPostController {
         post.setUserId(user.getId());
         post.setTitle(discussPost.getTitle());
         post.setContent(discussPost.getContent());
-
         discussPostService.addDiscussPost(post);
 
         //发帖事件，将帖子存放到es中，需要在命令行手动启动kafka、zookeeper
@@ -84,6 +87,10 @@ public class DiscussPostController {
         event.setEntityId(post.getId());
         //触发发帖事件
         eventProducer.fireEvent(event);
+
+        //计算帖子分数
+        String redisKey = RedisKeyUtil.getPostScoreKey();
+        redisTemplate.opsForSet().add(redisKey, post.getId());
 
         // 报错的情况,将来统一处理.
         return CommunityUtil.getJSONString(0, "发布成功！", null);
@@ -248,6 +255,10 @@ public class DiscussPostController {
         event.setEntityId(discussPostId);
         //触发加精帖子和取消加精帖子事件
         eventProducer.fireEvent(event);
+
+        //计算帖子分数
+        String redisKey = RedisKeyUtil.getPostScoreKey();
+        redisTemplate.opsForSet().add(redisKey, discussPostId);
 
         Map<String, Object> map = new HashMap<>();
         map.put("status", status);

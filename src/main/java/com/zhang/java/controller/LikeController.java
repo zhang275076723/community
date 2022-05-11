@@ -8,7 +8,9 @@ import com.zhang.java.service.LikeService;
 import com.zhang.java.util.CommunityConstant;
 import com.zhang.java.util.CommunityUtil;
 import com.zhang.java.util.HostHolder;
+import com.zhang.java.util.RedisKeyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -31,6 +33,9 @@ public class LikeController {
 
     @Autowired
     private EventProducer eventProducer;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     /**
      * 用户点赞和取消点赞，保证实体赞和用户实体赞对应（一致性），用事务完成
@@ -69,6 +74,12 @@ public class LikeController {
             event.setData("discussPostId", discussPostId);
             //触发点赞事件
             eventProducer.fireEvent(event);
+        }
+
+        if (entityType == CommunityConstant.ENTITY_TYPE_DISCUSSPOST) {
+            //只有对帖子的的评论，才计算帖子分数
+            String redisKey = RedisKeyUtil.getPostScoreKey();
+            redisTemplate.opsForSet().add(redisKey, discussPostId);
         }
 
         return CommunityUtil.getJSONString(0, null, map);

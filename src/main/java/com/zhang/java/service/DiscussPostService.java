@@ -10,7 +10,7 @@ import java.util.List;
  * @Description
  */
 public interface DiscussPostService {
-    List<DiscussPost> findDiscussPosts(Integer userId);
+    List<DiscussPost> findDiscussPosts(Integer userId, int orderMode);
 
     Integer findDiscussPostRows(Integer userId);
 
@@ -23,4 +23,6 @@ public interface DiscussPostService {
     int updateType(int id, int type);
 
     int updateStatus(int id, int status);
+
+    int updateScore(int id, double score);
 }

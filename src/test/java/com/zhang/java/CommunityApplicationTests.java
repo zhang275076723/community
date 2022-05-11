@@ -92,7 +92,7 @@ class CommunityApplicationTests implements ApplicationContextAware {
     public void testPageHelper() {
         PageHelper.startPage(1, 10);
         DiscussPostService discussPostService = (DiscussPostService) applicationContext.getBean("discussPostServiceImpl");
-        List<DiscussPost> discussPosts = discussPostService.findDiscussPosts(0);
+        List<DiscussPost> discussPosts = discussPostService.findDiscussPosts(0, 0);
         PageInfo<DiscussPost> pageInfo = new PageInfo<>(discussPosts, 5);
         System.out.println(pageInfo);
     }
@@ -440,15 +440,15 @@ class CommunityApplicationTests implements ApplicationContextAware {
 
         //一次保存多条数据
         //保存用户id为101的全部DiscussPost到discusspost索引(es的索引相当于数据库的表)
-//        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(101));
-//        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(102));
-//        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(103));
-//        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(111));
-//        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(112));
-//        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(131));
-//        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(132));
-//        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(133));
-//        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(134));
+//        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(101, 0));
+//        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(102, 0));
+//        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(103, 0));
+//        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(111, 0));
+//        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(112, 0));
+//        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(131, 0));
+//        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(132, 0));
+//        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(133, 0));
+//        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(134, 0));
 
         //覆盖原内容，来修改一条数据
 //        DiscussPost discussPost = discussPostMapper.selectDiscussPostById(231);
@@ -617,7 +617,7 @@ class CommunityApplicationTests implements ApplicationContextAware {
     }
 
     @Test
-    public void QuartzTest()   {
+    public void QuartzTest() {
         Scheduler scheduler = applicationContext.getBean(Scheduler.class);
         try {
             //删除该调度器的任务

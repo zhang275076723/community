@@ -72,16 +72,18 @@ public class HomeController {
      * 系统首页
      *
      * @param pageNum
+     * @param orderMode 排序模式，0-正常排序，1-按帖子分数由高到低排序
      * @param model
      * @return
      */
     @GetMapping("/index")
     public String getIndexPage(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+                               @RequestParam(value = "orderMode", defaultValue = "0") int orderMode,
                                Model model) {
         //帖子分页
         PageHelper.startPage(pageNum, 10);
         //userId为0，表示查询全部帖子
-        List<DiscussPost> discussPosts = discussPostService.findDiscussPosts(0);
+        List<DiscussPost> discussPosts = discussPostService.findDiscussPosts(0, orderMode);
         PageInfo<DiscussPost> pageInfo = new PageInfo<>(discussPosts, 5);
         model.addAttribute("pageInfo", pageInfo);
 
@@ -101,6 +103,8 @@ public class HomeController {
             discussPostAndUserList.add(map);
         }
         model.addAttribute("discussPostAndUserList", discussPostAndUserList);
+        //当前查询帖子的排序方式
+        model.addAttribute("orderMode", orderMode);
 
         return "index";
     }

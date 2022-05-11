@@ -9,7 +9,9 @@ import com.zhang.java.service.CommentService;
 import com.zhang.java.service.DiscussPostService;
 import com.zhang.java.util.CommunityConstant;
 import com.zhang.java.util.HostHolder;
+import com.zhang.java.util.RedisKeyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,6 +39,9 @@ public class CommentController {
 
     @Autowired
     private DiscussPostService discussPostService;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     /**
      * 添加帖子评论
@@ -86,6 +91,10 @@ public class CommentController {
             event.setEntityId(discussPostId);
             //触发发帖事件
             eventProducer.fireEvent(event);
+
+            //只有对帖子的评论，才计算帖子分数
+            String redisKey = RedisKeyUtil.getPostScoreKey();
+            redisTemplate.opsForSet().add(redisKey, discussPostId);
         }
         
         return "redirect:/discussPost/detail/" + discussPostId;

@@ -33,6 +33,11 @@ public class RedisKeyUtil {
     private static final String PREFIX_DAU = "dau";
 
     /**
+     * 帖子分数，在帖子点赞、帖子评论、加精时帖子分数会改变
+     */
+    private static final String PREFIX_POST = "post";
+
+    /**
      * 某个实体的赞，包括帖子实体、帖子的评论实体、用户实体
      * like:entity:entityType:entityId -> set类型(userId)
      *
@@ -158,5 +163,16 @@ public class RedisKeyUtil {
      */
     public static String getDAUKey(String startDate, String endDate) {
         return PREFIX_DAU + SPLIT + startDate + SPLIT + endDate;
+    }
+
+    /**
+     * 帖子分数
+     * post:score -> set类型(帖子id)
+     * 将需要修改分数帖子放到set中，可以去重
+     *
+     * @return
+     */
+    public static String getPostScoreKey() {
+        return PREFIX_POST + SPLIT + "score";
     }
 }

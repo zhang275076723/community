@@ -14,12 +14,15 @@ import java.util.List;
 @Mapper
 public interface DiscussPostMapper {
     /**
-     * 查询帖子，如果userId为0，表示查询全部帖子
+     * 查询帖子
+     * userId为0，表示查询全部帖子
      *
-     * @param userId
+     * @param userId    用户id
+     * @param orderMode 排序模式，0-正常排序，1-按帖子分数由高到低排序
      * @return
      */
-    List<DiscussPost> selectDiscussPosts(@Param("userId") Integer userId);
+    List<DiscussPost> selectDiscussPosts(@Param("userId") Integer userId,
+                                         @Param("orderMode") int orderMode);
 
     /**
      * 查询帖子的数量，如果userId为0，表示查询全部帖子的数量
@@ -78,4 +81,13 @@ public interface DiscussPostMapper {
      * @return
      */
     int updateStatus(@Param("id") int id, @Param("status") int status);
+
+    /**
+     * 修改帖子分数
+     *
+     * @param id
+     * @param score
+     * @return
+     */
+    int updateScore(@Param("id") int id, @Param("score") double score);
 }
