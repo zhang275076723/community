@@ -617,13 +617,31 @@ class CommunityApplicationTests implements ApplicationContextAware {
     }
 
     @Test
-    public void QuartzTest() {
+    public void quartzTest() {
         Scheduler scheduler = applicationContext.getBean(Scheduler.class);
         try {
             //删除该调度器的任务
             boolean result = scheduler.deleteJob(new JobKey("testJob", "testJobGroup"));
             System.out.println(result);
         } catch (SchedulerException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 命令行生成pdf：D:\wkhtmltopdf\bin>wkhtmltopdf https://www.nowcoder.com d:\community\wk-pdfs\1.pdf
+     * 命令行生成image：D:\wkhtmltopdf\bin>wkhtmltoimage https://www.nowcoder.com d:\community\wk-images\1.png
+     * 命令行生成大小变小的image：D:\wkhtmltopdf\bin>wkhtmltoimage --quality 75 https://www.nowcoder.com d:\community\wk-images\2.png
+     */
+    @Test
+    public void wkTest() {
+        String cmd = "d:\\wkhtmltopdf\\bin\\wkhtmltoimage --quality 75 https://www.nowcoder.com d:\\community\\wk-images\\3.png";
+        try {
+            //命令由操作系统执行，java程序不会等待命令执行完成之后才继续执行，两者是并发的，
+            //所以会先输出"生成成功"，在生成图片
+            Runtime.getRuntime().exec(cmd);
+            System.out.println("生成成功");
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

@@ -60,16 +60,16 @@ public class PostScoreRefreshJob implements Job {
 
         //redis中没有要刷新的帖子
         if (operations.size() == 0) {
-            logger.info("[任务取消] 没有需要刷新的帖子!");
+            logger.info("[帖子分数刷新任务取消] 没有需要刷新的帖子!");
             return;
         }
 
-        logger.info("[任务开始] 正在刷新帖子分数，需要刷新帖子数量: " + operations.size());
+        logger.info("[帖子分数刷新任务开始] 正在刷新帖子分数，需要刷新帖子数量: " + operations.size());
         while (operations.size() > 0) {
             //每次随机弹出一个帖子id，进行刷新
             refreshPost((Integer) operations.pop());
         }
-        logger.info("[任务结束] 帖子分数刷新完毕!");
+        logger.info("[帖子分数刷新任务结束] 帖子分数刷新完毕!");
     }
 
     /**
