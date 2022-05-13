@@ -398,6 +398,8 @@ class CommunityApplicationTests implements ApplicationContextAware {
      * 在server.properties中添加
      * listeners=PLAINTEXT://localhost:9092
      * advertised.listeners=PLAINTEXT://localhost:9092
+     * <p>
+     * 如果还有错误，记得把日志全部删除
      */
     @Test
     public void kafkaTest() {

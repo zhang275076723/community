@@ -1,5 +1,7 @@
 package com.zhang.java.controller;
 
+import com.qiniu.util.Auth;
+import com.qiniu.util.StringMap;
 import com.zhang.java.annotation.LoginRequired;
 import com.zhang.java.domain.User;
 import com.zhang.java.service.FollowService;
@@ -44,32 +46,88 @@ public class UserController {
     @Autowired
     private FollowService followService;
 
+    /**
+     * 项目路径名
+     */
     @Value("${server.servlet.context-path}")
-    //项目路径名
     private String contextPath;
 
+    /**
+     * 服务器域名
+     */
     @Value("${community.path.domain}")
-    //服务器域名
     private String domain;
 
+    /**
+     * 本地服务器的上传路径
+     */
     @Value("${community.path.upload}")
-    //上传路径
     private String uploadPath;
 
+    @Value("${qiniu.key.access}")
+    private String accessKey;
+
+    @Value("${qiniu.key.secret}")
+    private String secretKey;
+
     /**
-     * 用户账号设置页面
+     * 七牛云用户头像上传空间名
+     */
+    @Value("${qiniu.bucket.header.name}")
+    private String headerBucketName;
+
+    /**
+     * 七牛云用户头像上传url
+     */
+    @Value("${quniu.bucket.header.url}")
+    private String headerBucketUrl;
+
+    /**
+     * 用户账号设置页面，同时生成上传凭证，用于七牛云识别身份
      *
      * @return
      */
     //使用自定义注解实现请求拦截，使用spring security拦截
 //    @LoginRequired
     @GetMapping("/setting")
-    public String getSettingPage() {
+    public String getSettingPage(Model model) {
+        //上传文件名
+        String fileName = CommunityUtil.generateUUID() + ".png";
+        //设置响应信息，七牛云返回的json数据
+        StringMap policy = new StringMap();
+        policy.put("returnBody", CommunityUtil.getJSONString(0, null, null));
+        //生成上传凭证
+        Auth auth = Auth.create(accessKey, secretKey);
+        //凭证有效时间1小时
+        String uploadToken = auth.uploadToken(headerBucketName, fileName, 3600, policy);
+
+        model.addAttribute("fileName", fileName);
+        model.addAttribute("uploadToken", uploadToken);
+
         return "/site/setting";
     }
 
     /**
-     * 用户上传头像
+     * 上传头像到七牛云服务器之后，更新用户头像路径
+     *
+     * @param fileName
+     * @return
+     */
+    @PostMapping("/header/url")
+    @ResponseBody
+    public String updateHeaderUrl(@RequestParam("fileName") String fileName) {
+        if (StringUtils.isBlank(fileName)) {
+            return CommunityUtil.getJSONString(1, "文件名不能为空！", null);
+        }
+
+        String url = headerBucketUrl + "/" + fileName;
+        userService.updateHeader(hostHolder.getUser().getId(), url);
+
+        return CommunityUtil.getJSONString(0, "头像更新成功！", null);
+    }
+
+    /**
+     * 用户上传头像到本地服务器
      *
      * @param file
      * @param model
@@ -120,7 +178,7 @@ public class UserController {
     }
 
     /**
-     * 根据headerUrl访问本地存放的用户头像
+     * 根据headerUrl访问本地服务器存放的用户头像
      *
      * @param filename
      * @param response

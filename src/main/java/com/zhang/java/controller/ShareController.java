@@ -48,10 +48,16 @@ public class ShareController {
     private String contextPath;
 
     /**
-     * wk图片存放路径
+     * wk图片存放到本地服务器的路径
      */
     @Value("${wk.image.storage}")
     private String wkImageStorage;
+
+    /**
+     * 七牛云生成长图url
+     */
+    @Value("${qiniu.bucket.share.url}")
+    private String shareBucketUrl;
 
     /**
      * 生成长图
@@ -74,14 +80,16 @@ public class ShareController {
         eventProducer.fireEvent(event);
 
         Map<String, Object> map = new HashMap<>();
-        //生成长图的访问路径
-        map.put("shareUrl", domain + contextPath + "/share/image/" + fileName);
+        //生成存储在本地服务器长图的访问路径
+//        map.put("shareUrl", domain + contextPath + "/share/image/" + fileName);
+        //生成存储在七牛云长图的访问路径
+        map.put("shareUrl", shareBucketUrl + "/" + fileName);
 
         return CommunityUtil.getJSONString(0, "生成长图成功", map);
     }
 
     /**
-     * 显示生成的长图
+     * 显示存储在本地服务器生成的长图
      * http://localhost:8080/community/share/image/73ebfe2dd07f4eee96bf583523d5f33d.png
      *
      * @param fileName

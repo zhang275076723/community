@@ -135,6 +135,13 @@
             <artifactId>spring-boot-starter-quartz</artifactId>
         </dependency>
 
+        <!--七牛云服务器，存储用户头像和生成长图分享的网页图片-->
+        <dependency>
+            <groupId>com.qiniu</groupId>
+            <artifactId>qiniu-java-sdk</artifactId>
+            <version>7.10.2</version>
+        </dependency>
+
     </dependencies>
 
     <build>

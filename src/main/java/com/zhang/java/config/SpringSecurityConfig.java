@@ -38,6 +38,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(
                         "/user/setting",
                         "/user/uploadHeaderImage",
+                        "/user/header/url",
                         "/user/updatePassword",
                         "/logout",
                         "/comment/add/**",
