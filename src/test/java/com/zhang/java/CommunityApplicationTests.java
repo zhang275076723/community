@@ -90,11 +90,12 @@ class CommunityApplicationTests implements ApplicationContextAware {
 
     @Test
     public void testPageHelper() {
-        PageHelper.startPage(1, 10);
-        DiscussPostService discussPostService = (DiscussPostService) applicationContext.getBean("discussPostServiceImpl");
-        List<DiscussPost> discussPosts = discussPostService.findDiscussPosts(0, 0);
-        PageInfo<DiscussPost> pageInfo = new PageInfo<>(discussPosts, 5);
-        System.out.println(pageInfo);
+//        PageHelper.startPage(1, 10);
+//        DiscussPostService discussPostService = (DiscussPostService) applicationContext.getBean("discussPostServiceImpl");
+//        //需要查询全部帖子，需要重写一个查询全部帖子的方法
+//        List<DiscussPost> discussPosts = discussPostService.findDiscussPosts(0, 0);
+//        PageInfo<DiscussPost> pageInfo = new PageInfo<>(discussPosts, 5);
+//        System.out.println(pageInfo);
     }
 
     @Test
@@ -648,6 +649,29 @@ class CommunityApplicationTests implements ApplicationContextAware {
         }
     }
 
+    /**
+     * caffeine本地缓存测试
+     */
+    @Test
+    public void cacheTest() {
+        DiscussPostService discussPostService = applicationContext.getBean(DiscussPostService.class);
+
+        //先随机生成30万个帖子，存储在数据库中，用于JMeter压力测试
+//        for (int i = 0; i < 300000; i++) {
+//            DiscussPost post = new DiscussPost();
+//            post.setUserId(111);
+//            post.setTitle("互联网求职暖春计划");
+//            post.setContent("今年的就业形势，确实不容乐观。过了个年，仿佛跳水一般，整个讨论区哀鸿遍野！19届真的没人要了吗？！18届被优化真的没有出路了吗？！大家的“哀嚎”与“悲惨遭遇”牵动了每日潜伏于讨论区的牛客小哥哥小姐姐们的心，于是牛客决定：是时候为大家做点什么了！为了帮助大家度过“寒冬”，牛客网特别联合60+家企业，开启互联网求职暖春计划，面向18届&19届，拯救0 offer！");
+//            post.setCreateTime(new Date());
+//            post.setScore(Math.random() * 2000);
+//            discussPostService.addDiscussPost(post);
+//        }
+
+        System.out.println(discussPostService.findDiscussPosts(0, 1, 0, 10));
+        System.out.println(discussPostService.findDiscussPosts(0, 1, 0, 10));
+        System.out.println(discussPostService.findDiscussPosts(0, 1, 0, 10));
+        System.out.println(discussPostService.findDiscussPosts(0, 0, 0, 10));
+    }
 }
 
 @Component

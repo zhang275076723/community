@@ -1,9 +1,9 @@
 package com.zhang.java.controller;
 
-import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zhang.java.domain.DiscussPost;
+import com.zhang.java.domain.Page;
 import com.zhang.java.domain.User;
 import com.zhang.java.service.DiscussPostService;
 import com.zhang.java.service.LikeService;
@@ -14,7 +14,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
@@ -80,12 +79,25 @@ public class HomeController {
     public String getIndexPage(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
                                @RequestParam(value = "orderMode", defaultValue = "0") int orderMode,
                                Model model) {
-        //帖子分页
-        PageHelper.startPage(pageNum, 10);
+//        //pageHelper帖子分页
+//        PageHelper.startPage(pageNum, 10);
+//        //userId为0，表示查询全部帖子
+//        List<DiscussPost> discussPosts = discussPostService.findDiscussPosts(0, orderMode);
+//        PageInfo<DiscussPost> pageInfo = new PageInfo<>(discussPosts, 5);
+//        model.addAttribute("pageInfo", pageInfo);
+
+        //因为使用到了caffeine本地缓存，所以使用自定义帖子分页
+        Page page = new Page();
+        page.setPageSize(10);
+        page.setTotalRows(discussPostService.findDiscussPostRows(0));
+        page.setTotalPages();
+        page.setPageNum(pageNum);
+        page.setUrlPath("/index?orderMode=" + orderMode);
+        model.addAttribute("page", page);
+
         //userId为0，表示查询全部帖子
-        List<DiscussPost> discussPosts = discussPostService.findDiscussPosts(0, orderMode);
-        PageInfo<DiscussPost> pageInfo = new PageInfo<>(discussPosts, 5);
-        model.addAttribute("pageInfo", pageInfo);
+        List<DiscussPost> discussPosts = discussPostService.findDiscussPosts(0, orderMode,
+                page.getOffset(), page.getPageSize());
 
         //用户和帖子对应
         List<Map<String, Object>> discussPostAndUserList = new ArrayList<>();

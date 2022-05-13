@@ -19,10 +19,14 @@ public interface DiscussPostMapper {
      *
      * @param userId    用户id
      * @param orderMode 排序模式，0-正常排序，1-按帖子分数由高到低排序
+     * @param offset    查询偏移量
+     * @param limit     查询数量
      * @return
      */
     List<DiscussPost> selectDiscussPosts(@Param("userId") Integer userId,
-                                         @Param("orderMode") int orderMode);
+                                         @Param("orderMode") int orderMode,
+                                         @Param("offset") int offset,
+                                         @Param("limit") int limit);
 
     /**
      * 查询帖子的数量，如果userId为0，表示查询全部帖子的数量

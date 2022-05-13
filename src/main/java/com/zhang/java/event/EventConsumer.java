@@ -2,7 +2,6 @@ package com.zhang.java.event;
 
 import com.alibaba.fastjson.JSONObject;
 import com.qiniu.common.QiniuException;
-import com.qiniu.common.Zone;
 import com.qiniu.http.Response;
 import com.qiniu.storage.Configuration;
 import com.qiniu.storage.Region;

@@ -10,7 +10,7 @@ import java.util.List;
  * @Description
  */
 public interface DiscussPostService {
-    List<DiscussPost> findDiscussPosts(Integer userId, int orderMode);
+    List<DiscussPost> findDiscussPosts(Integer userId, int orderMode, int limit, int offset);
 
     Integer findDiscussPostRows(Integer userId);
 
